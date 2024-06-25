@@ -1,0 +1,14 @@
+{
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    },
+    "emmet.syntaxProfiles": {
+        "javascript": "jsx"
+    },
+    "cSpell.words": [
+        "extralight",
+        "keam",
+        "neet",
+        "Signup"
+    ]
+}
