@@ -1,12 +1,13 @@
 "use client"
 import Header from "../../../components/Header"
+import clientUrl from "../../../config/clientUrl"
 
 function JeeRegister() {
 
     const register =  (e) => {
         e.preventDefault()
         window.open(
-            "http://localhost:3000/JEE/exam/login",
+            clientUrl+"/JEE/exam/login",
             '_blank',
             'noopener,noreferrer,fullscreen=yes,scrollbars=yes'
         );
