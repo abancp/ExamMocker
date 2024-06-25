@@ -35,4 +35,29 @@ html{
 .glow {
   box-shadow: rgb(10, 101, 198) 270px -20px 950px 43px;
 }
-
+.sloped-div {
+  position: relative;
+  background-color: #e74c3c; /* Tailwind equivalent: bg-orange-600 */
+  color: white; /* Tailwind equivalent: text-white */
+  padding: 2rem; /* Tailwind equivalent: p-8 */
+  overflow: hidden; /* Ensures pseudo-elements are properly contained */
+}
+.sloped-div::before, .sloped-div::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50px; /* Adjust this to control the slope height */
+  background: inherit; /* Inherit background color from the parent */
+  z-index: -1; /* Places pseudo-elements behind the div content */
+}
+.sloped-div::before {
+  top: -25px; /* Adjust to control the position of the top slope */
+  transform: skewY(-5deg); /* Adjust angle for the top slope */
+  transform-origin: 0 100%;
+}
+.sloped-div::after {
+  bottom: -25px; /* Adjust to control the position of the bottom slope */
+  transform: skewY(5deg); /* Adjust angle for the bottom slope */
+  transform-origin: 0 0;
+}
