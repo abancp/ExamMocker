@@ -1,4 +1,6 @@
-import NotAnswered from '../../../components/NotAnswered'
+import NotAnswered from '../../../components/Jee/NotAnswered'
+import NotVisited from '../../../components/Jee/NotVisited'
+import Answered from '../../../components/Jee/Answered'
 
 const JeeExam = () => {
 
@@ -49,8 +51,12 @@ const JeeExam = () => {
             <button className="px-2 py-1 bg-green-600 text-white font-semibold">SUBMIT</button>
           </div>
         </div>
-        <div>
-          {/* <NotAnswered/> */}
+        <div className='w-[30%] h-[8rem] pt-5 grid gap-2 grid-cols-2'>
+          <div className='flex gap-1  items-center'> <NotVisited/> Not Visited</div>
+          <div className='flex gap-1  items-center'> <NotAnswered/> Not Answered</div>
+          <div className='flex gap-1  items-center'> <Answered/> Answered</div>
+          <div>  Marked For Review</div>
+          <div className='w-[27rem]' >Answered & Marked for Review (will be considered for evaluation)</div>
         </div>
       </div>
     </div>

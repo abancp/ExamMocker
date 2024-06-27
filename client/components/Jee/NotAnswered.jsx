@@ -2,7 +2,7 @@ import React from 'react'
 
 function NotAnswered() {
     return (
-        <div class="sloped-di bg-orange-600">
+        <div class="text-white bg-red-600 trapezoid flex text-sm justify-center items-center">
             1
         </div>
     )
