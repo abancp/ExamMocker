@@ -1,11 +1,13 @@
-import NotAnswered from '../../../components/Jee/NotAnswered'
-import NotVisited from '../../../components/Jee/NotVisited'
-import Answered from '../../../components/Jee/Answered'
+import QuestionIcon from "../../../components/Jee/QuestionIcon"
 
 const JeeExam = () => {
-
+  const questions = [
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  ];
   return (
-    <div className='h-screen  w-full bg-white text-black'>
+    <div className='max-h-max min-h-screen w-full bg-white text-black'>
       <div className=" text-blue-700 font-bold justify-between px-3 pb-1 items-center flex  h-16">
         <h1 className="text-3xl">ExamMocker</h1>
         <div>
@@ -30,13 +32,13 @@ const JeeExam = () => {
           <div className="h-[23rem] border-b border-black overflow-y-scroll">
             <h1 className="p-3 text-xl font-sans font-semibold">How many trinagles in the latest model of trigmoetryc ration of pythagorous in the mirror of like as a mirror in the hollowgram with my predictions that avoid How many trinagles in the latest model of trigmoetryc ration of pythagorous in the mirror of like as a mirror in the hollowgram with my predictions that avoid How many trinagles in the latest model of trigmoetryc ration of pythagorous in the mirror of like as a mirror in the hollowgram with my predictions that avoid </h1>
             <div className="flex flex-col gap-3 p-3 ">
-              <label htmlFor="mcq_option_1" className="flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_1" /><h1 className="text-xl font-semibold"> (1) <span className="ml-5">3</span></h1></label>
-              <label htmlFor="mcq_option_2" className="flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_2" /><h1 className="text-xl font-semibold"> (2) <span className="ml-5">1</span></h1></label>
-              <label htmlFor="mcq_option_3" className="flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_3" /><h1 className="text-xl font-semibold"> (3) <span className="ml-5">2</span></h1></label>
-              <label htmlFor="mcq_option_4" className="flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_4" /><h1 className="text-xl font-semibold"> (4) <span className="ml-5">6</span></h1></label>
+              <label htmlFor="mcq_option_1" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_1" /><h1 className="text-xl font-semibold"> (1) <span className="ml-5">3</span></h1></label>
+              <label htmlFor="mcq_option_2" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_2" /><h1 className="text-xl font-semibold"> (2) <span className="ml-5">1</span></h1></label>
+              <label htmlFor="mcq_option_3" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_3" /><h1 className="text-xl font-semibold"> (3) <span className="ml-5">2</span></h1></label>
+              <label htmlFor="mcq_option_4" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_4" /><h1 className="text-xl font-semibold"> (4) <span className="ml-5">6</span></h1></label>
             </div>
           </div>
-          
+
           <div className="flex mt-5 gap-3">
             <button className="bg-green-600  px-2 py-1 text-lg font-semibold text-white">Save & Next</button>
             <button className="bg-orange-500  px-2 py-1 text-lg font-semibold text-white">Save & Mark For Review</button>
@@ -51,12 +53,17 @@ const JeeExam = () => {
             <button className="px-2 py-1 bg-green-600 text-white font-semibold">SUBMIT</button>
           </div>
         </div>
-        <div className='w-[30%] h-[8rem] pt-5 grid gap-2 grid-cols-2'>
-          <div className='flex gap-1  items-center'> <NotVisited/> Not Visited</div>
-          <div className='flex gap-1  items-center'> <NotAnswered/> Not Answered</div>
-          <div className='flex gap-1  items-center'> <Answered/> Answered</div>
-          <div>  Marked For Review</div>
-          <div className='w-[27rem]' >Answered & Marked for Review (will be considered for evaluation)</div>
+        <div className='w-[30%] h-[8rem] pt-5 '>
+          <div className='grid gap-2 grid-cols-2 w-'>
+            <div className='flex gap-1  items-center'> <QuestionIcon type={1} number={1} /> Not Visited</div>
+            <div className='flex gap-1  items-center'> <QuestionIcon type={2} number={1} /> Not Answered</div>
+            <div className='flex gap-1  items-center'> <QuestionIcon type={3} number={1} /> Answered</div>
+            <div className='flex gap-1  items-center'> <QuestionIcon type={4} number={1} />  Marked For Review</div>
+          </div>
+            <div className='flex gap-1 mt-1 items-center'> <QuestionIcon type={5} number={99} /> Answered &  Marked for Review </div>
+          <div className='overflow-y-scroll h-72 mt-10 p-2  w-full grid grid-cols-5'>
+            {questions.map((type, i) => (<QuestionIcon type={type} number={i + 1} />))}
+          </div>
         </div>
       </div>
     </div>
