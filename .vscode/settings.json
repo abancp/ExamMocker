@@ -6,9 +6,13 @@
         "javascript": "jsx"
     },
     "cSpell.words": [
+        "bson",
         "extralight",
         "keam",
         "neet",
         "Signup"
-    ]
+    ],
+    "[go]": {
+        "editor.formatOnSave": false
+    }
 }
