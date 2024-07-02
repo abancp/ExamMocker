@@ -3,6 +3,7 @@ package main
 import (
 	"server/auth"
 	"server/config"
+	"server/exam"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ func main() {
 	})
 
 	auth.Auth(r)
+	exam.Exam(r)
 
 	// Start the server on port 8080
 	r.Run(":8080")
