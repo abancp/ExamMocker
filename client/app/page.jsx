@@ -31,7 +31,7 @@ function Page() {
             <section id="exams" className="w-full mt-10 flex px-40 flex-col gap-10">
                 <div className="flex justify-start">
                     <div className="p-3 border-[3px] rounded-[2rem] border-[#259ac4]">
-                        <Link href={'/JEE'}><div ref={jeeRef} hidden={jeeIsVisible ? false : true} className={`cursor-pointer bg-gradient-to-t from-[#090A0D] duration-700 ${jeeIsVisible && "shadow-[rgba(10,101,198,0.5)_0px_0px_700px_-10px]"} flex gap-3 flex-col justify-center items-center to-[#131C23] text-center rounded-lg border-[#0e2731] w-[320px] h-[350px]`}>
+                        <Link href={'/jee'}><div ref={jeeRef} hidden={jeeIsVisible ? false : true} className={`cursor-pointer bg-gradient-to-t from-[#090A0D] duration-700 ${jeeIsVisible && "shadow-[rgba(10,101,198,0.5)_0px_0px_700px_-10px]"} flex gap-3 flex-col justify-center items-center to-[#131C23] text-center rounded-lg border-[#0e2731] w-[320px] h-[350px]`}>
                             <h1 className=" text-3xl  font-semibold">JEE Mains</h1>
                             <h3 className="font-extralight ">Engineering</h3>
                         </div></Link>

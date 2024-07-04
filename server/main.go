@@ -1,15 +1,23 @@
 package main
 
 import (
+	"log"
 	"server/auth"
 	"server/config"
 	"server/exam"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
+	// Load the .env file
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
+	
 	//connect to mongodb
 	config.ConnectDb()
 

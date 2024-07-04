@@ -7,7 +7,7 @@ function JeeRegister() {
     const register =  (e) => {
         e.preventDefault()
         window.open(
-            clientUrl+"/JEE/exam/login",
+            clientUrl+"/jee/exam/login",
             '_blank',
             'noopener,noreferrer,fullscreen=yes,scrollbars=yes'
         );

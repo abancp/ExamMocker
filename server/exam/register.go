@@ -14,10 +14,6 @@ type RegisterData struct {
 	Email string `json:"email"`
 }
 
-type ExamRegisterData struct {
-	Email string `json:"email"`
-}
-
 func Register(c *gin.Context) {
 	var body RegisterData
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -46,7 +42,7 @@ func Register(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "User already registered for jee exam"})
 				return
 			}
-			var registerData ExamRegisterData
+			var registerData RegisterData
 			registerData.Email = body.Email
 			result, err := db.Collection("jee-users").InsertOne(context.Background(), registerData)
 			if err != nil {

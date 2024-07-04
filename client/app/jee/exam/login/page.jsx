@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/router"
 
 function JeeExamLogin() {
 
@@ -11,7 +11,7 @@ function JeeExamLogin() {
         document.documentElement.requestFullscreen().catch((err) => {
             console.error(`Error attempting to enable full-screen mode: ${err.message}`);
         });
-        router.push("/JEE/exam")
+        router.push("/jee/exam")
     }
     return (
         <div className="h-screen bg-white gap-3 flex flex-col justify-start items-center pt-[10rem] w-full">

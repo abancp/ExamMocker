@@ -17,8 +17,8 @@ import (
 // var jwtSecret = []byte("my_secret_key")
 
 type User struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type SignupUser struct {
@@ -37,24 +37,6 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-// func generateToken(username string) (string, error) {
-// 	// Token expiration time
-// 	expirationTime := time.Now().Add(24 * time.Hour)
-
-// 	// Create the JWT claims, including the username and expiry time
-// 	claims := &Claims{
-// 		Username: username,
-// 		StandardClaims: jwt.StandardClaims{
-// 			ExpiresAt: expirationTime.Unix(),
-// 		},
-// 	}
-
-// 	// Create the token
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-// 	// Sign the token with our secret key
-// 	return token.SignedString(jwtSecret)
-// }
 
 func Auth(r *gin.Engine) {
 	r.POST("/login",Login)
@@ -164,4 +146,5 @@ func Signup(c *gin.Context){
 	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,false,true)
 
 	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
+
 }
