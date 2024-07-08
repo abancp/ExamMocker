@@ -9,7 +9,7 @@ function page() {
   const router = useRouter()
   const submitHandler = (e) => {
     e.preventDefault()
-    router.push("/admin/add/jee/question")
+    router.push("/admin/add/jee/question-set")
   }
 
   return (
