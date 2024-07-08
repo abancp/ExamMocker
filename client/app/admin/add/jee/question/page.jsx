@@ -117,7 +117,8 @@ function page() {
 
     const saveQuestion = async () => {
         console.log(question)
-        await axios.post(SERVER_URL + "/admin/add-question", question)
+        const result = await axios.post(SERVER_URL + "/admin/add-question", question)
+        console.log(result)
     }
 
 
