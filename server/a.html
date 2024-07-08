@@ -6,89 +6,22 @@
     <title>IndexedDB Image Storage</title>
 </head>
 <body>
-    <h2>Store and Retrieve Images in IndexedDB</h2>
-    <input type="file" id="imageInput" accept="image/*">
-    <button id="saveImage">Save Image</button>
-    <button id="getImage">Get Image</button>
-    <div id="imageDisplay"></div>
-
     <script>
-        let db;
-        const request = indexedDB.open('ImageDatabase', 1);
-
-        request.onerror = (event) => {
-            console.error('Database error:', event.target.error);
-        };
-
-        request.onsuccess = (event) => {
-            db = event.target.result;
-            console.log('Database opened successfully');
-        };
-
-        request.onupgradeneeded = (event) => {
-            db = event.target.result;
-            db.createObjectStore('images', { keyPath: 'id', autoIncrement: true });
-            console.log('Object store created');
-        };
-
-        document.getElementById('saveImage').addEventListener('click', () => {
-            const fileInput = document.getElementById('imageInput');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('Please select an image file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const imageBlob = new Blob([event.target.result], { type: file.type });
-
-                const transaction = db.transaction(['images'], 'readwrite');
-                const objectStore = transaction.objectStore('images');
-                const request = objectStore.add({ image: imageBlob, name: file.name });
-
-                request.onsuccess = () => {
-                    console.log('Image saved to IndexedDB');
-                };
-
-                request.onerror = (event) => {
-                    console.error('Error saving image:', event.target.error);
-                };
-            };
-
-            reader.onerror = (event) => {
-                console.error('FileReader error:', event.target.error);
-            };
-
-            reader.readAsArrayBuffer(file);
-        });
-
-        document.getElementById('getImage').addEventListener('click', () => {
-            const transaction = db.transaction(['images'], 'readonly');
-            const objectStore = transaction.objectStore('images');
-            const request = objectStore.getAll();  // Get all images
-
-            request.onsuccess = (event) => {
-                const images = event.target.result;
-
-                const imageDisplay = document.getElementById('imageDisplay');
-                imageDisplay.innerHTML = '';  // Clear any previous images
-
-                images.forEach((imageData) => {
-                    const imageUrl = URL.createObjectURL(imageData.image);
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imageUrl;
-                    imgElement.alt = imageData.name;
-                    imgElement.style.width = '200px';  // Example size
-                    imageDisplay.appendChild(imgElement);
-                });
-            };
-
-            request.onerror = (event) => {
-                console.error('Error retrieving images:', event.target.error);
-            };
-        });
-    </script>
+        function saveimg()
+        {
+            var c = document.getElementById('mycanvas');
+            var t = c.getContext('2d');
+            window.location.href = image;
+        
+            window.open('', document.getElementById('mycanvas').toDataURL());
+        }
+        </script>
+        
+        <div id="mycanvas">
+        This is just a test<br />
+        12344<br />
+        </div>
+        
+        <button onclick="saveimg()">Save</button>
 </body>
 </html>
