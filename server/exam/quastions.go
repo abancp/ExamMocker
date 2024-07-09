@@ -11,7 +11,7 @@ import (
 type QuestionBody struct {
 	Type     string   `json:"type"`
 	Question string   `json:"question"`
-	Options  [4]string `json:"options"`
+	Options  [4]string`json:"options"`
 	Answer   string   `json:"answer"`
 }
 

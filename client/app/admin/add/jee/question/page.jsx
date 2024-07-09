@@ -117,11 +117,17 @@ function page() {
 
     const saveQuestion = async () => {
         console.log(question)
-        const result = await axios.post(SERVER_URL + "/admin/add-question", question)
-        console.log(result)
+        if (questionType === "MCQ") {
+            const result = await axios.post(SERVER_URL + "/admin/add-question", question)
+            console.log(result)
+        } else {
+            const { options, ...filteredQuestion } = question
+            const result = await axios.post(SERVER_URL + "/admin/add-question", filteredQuestion)
+            console.log(result)
+        }
     }
 
- 
+
     return (
         <div className='w-full flex flex-col pt-14 p-4 gap-2 h-screen'>
             <Header />
