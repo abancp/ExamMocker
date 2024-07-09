@@ -121,7 +121,7 @@ function page() {
         console.log(result)
     }
 
-
+ 
     return (
         <div className='w-full flex flex-col pt-14 p-4 gap-2 h-screen'>
             <Header />
