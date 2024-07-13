@@ -16,7 +16,7 @@ function Signup() {
                 DOB  : form[4].value,
                 state : form[5].value
             }
-            axios.post(SERVER_URL+"/login",user).then(({data})=>{
+            axios.post(SERVER_URL+"/signup",user,{withCredentials:true}).then(({data})=>{
                 console.log(data)
             })
             
