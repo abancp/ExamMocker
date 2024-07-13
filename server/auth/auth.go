@@ -85,7 +85,7 @@ func Login(c *gin.Context){
 	}
 	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,false,true)
 	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,false,true)
-
+	user.Password = ""
 	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
 
 }
@@ -144,7 +144,7 @@ func Signup(c *gin.Context){
 	}
 	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,false,true)
 	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,false,true)
-
+	user.Password = ""
 	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
 
 }
