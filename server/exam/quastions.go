@@ -16,12 +16,48 @@ type QuestionBody struct {
 	Question string    `json:"question"`
 	Options  [4]string `json:"options"`
 	Answer   string    `json:"answer"`
+	Subject  string    `json:"subject"`
+	Topic    string    `json:"topic"`
 }
 
 func GetQuestions(c *gin.Context) {
+	subject := c.Query("subject")
+	topic := c.Query("topic")
+	search := c.Query("search")
+
 	db := config.DB
 	var results []bson.M
-	cursor, err := db.Collection("questions").Find(context.Background(), bson.D{})
+	var filter bson.M
+	if search != "" {
+		if subject != "" {
+			if topic != "" {
+				filter = bson.M{"topic": topic, "subject": subject, "question": bson.M{"$regex":search, "$options": "i"}}
+			} else {
+				filter = bson.M{"subject": subject, "question": bson.M{"$regex":search, "$options": "i"}}
+			}
+		} else {
+			if topic != "" {
+				filter = bson.M{"topic": topic, "question": bson.M{"$regex":search, "$options": "i"}}
+			} else {
+				filter = bson.M{"question": bson.M{"$regex":search, "$options": "i"}}
+			}
+		}
+	} else {
+		if subject != "" {
+			if topic != "" {
+				filter = bson.M{"topic": topic, "subject": subject}
+			} else {
+				filter = bson.M{"subject": subject}
+			}
+		} else {
+			if topic != "" {
+				filter = bson.M{"topic": topic}
+			} else {
+				filter = bson.M{}
+			}
+		}
+	}
+	cursor, err := db.Collection("questions").Find(context.Background(), filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database Error"})
 		return
@@ -42,7 +78,7 @@ func GetQuestions(c *gin.Context) {
 		return
 	}
 	print(results)
-	c.JSON(http.StatusOK, gin.H{"questions": results})
+	c.JSON(http.StatusOK, gin.H{"success": true, "questions": results})
 }
 
 func AddQuestion(c *gin.Context) {
@@ -59,7 +95,7 @@ func AddQuestion(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Question added successfully"})
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Question added successfully"})
 
 }
 
@@ -81,5 +117,5 @@ func GetQuestion(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{"question":question})
+	c.JSON(http.StatusOK, gin.H{"success": true, "question": question})
 }
