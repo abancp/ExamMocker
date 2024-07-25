@@ -7,6 +7,8 @@ func Exam(r *gin.Engine) {
 	r.POST("/admin/add-question",AddQuestion)
 	r.GET("/admin/questions",GetQuestions)
 	r.GET("/admin/question/:id",GetQuestion)
+	r.GET("/admin/exam/:id",GetExams)
+	r.POST("/admin/exam",AddExam)
 	r.GET("/admin/topics",GetTopics)
 	r.POST("/admin/topic",AddTopic)
 }
