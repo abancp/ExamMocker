@@ -1,12 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import Header from '../../../../../components/Admin/Header'
+import Header from '../../../../../../components/Admin/Header'
 import axios from 'axios'
-import SERVER_URL from '../../../../../config/serverUrl'
+import SERVER_URL from '../../../../../../config/serverUrl'
 import Link from 'next/link'
-import useDebounce from "../../../../../hooks/useDebounce"
+import useDebounce from "../../../../../../hooks/useDebounce"
 import { MathJax, MathJaxContext } from 'better-react-mathjax'
+import { toast } from 'sonner'
 
 function page() {
   //M:Mathematics | P:Physics | C:Chemistry
@@ -19,10 +20,11 @@ function page() {
   const questionsIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState(null)
-  const [exam] = useState({ mathematics: {}, physics: {}, chemistry: {} })
+  const [exam,setExam] = useState({ mathematics: {}, physics: {}, chemistry: {} })
   const [topics, setTopics] = useState({ mathematics: [], physics: [], chemistry: [] })
   const [topic, setTopic] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [saving,setSaving] = useState(false)
 
   const debounce = useDebounce()
 
@@ -49,10 +51,6 @@ function page() {
     }
   }
 
-  const changeQuestionType = (e) => {
-    setQuestionType(e.target.id)
-  }
-
   const changeQuestionNumber = (e) => {
     addCurrentQuestionToExam()
     setCurrentQuestion(null)
@@ -77,6 +75,19 @@ function page() {
     } else {
       console.log("no question for save")
     }
+  }
+
+  const save = () => {
+    setSaving(true)
+     setTimeout(()=>{ axios.post(SERVER_URL+"/admin/exam/save",exam,{withCredentials:true}).then(({data})=>{
+      setSaving(false)
+      if(data.success){
+        console.log("Saved Successfully")
+      }else{
+        toast.error(data.message || "something went wrong")
+      }
+    })},1000)
+   
   }
 
   const searchQuestions = async (search, subjectForSearch, topicForSearch) => {
@@ -127,6 +138,8 @@ function page() {
             </select>
           </div>
 
+          <button onClick={()=>(save())} className={`${saving && 'opacity-70'} py-[.279rem] px-2 border border-[#259ac4] font-bold text-lg bg-[#259ac4]`}>Save</button>
+
         </div>
 
         <div className='border p-2 border-[#259ac4] flex flex-col gap-2 h-full w-full'>
@@ -141,7 +154,7 @@ function page() {
               </div> :
               <h1 className="text-3xl font-semibold text-[#259ac481]">Question Is Here</h1>}
           </div>
-          {
+          { 
             questions?.map((question) => (
               <div href={'/admin/question/' + question._id} className='border-[#259ac4] w-full flex justify-between  p-2 border'>
                 <div onClick={() => { setCurrentQuestion(question) }} className="whitespace-nowrap overflow-hidden w-full text-ellipsis"><MathJax>{question.question}</MathJax></div>

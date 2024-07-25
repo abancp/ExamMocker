@@ -3,12 +3,16 @@ import React from 'react'
 import Header from '../../../../../components/Admin/Header'
 import Input from '../../../../../components/Admin/Input';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import SERVER_URL from "../../../../../config/serverUrl"
 
 function page() {
 
   const router = useRouter()
   const submitHandler = (e) => {
     e.preventDefault()
+    console.log({exam:e.target[0].value,date:e.target[1].value,examId:e.target[2].value});
+    axios.post(SERVER_URL+'/admin/exam',{exam:e.target[0].value,date:e.target[1].value,examId:e.target[2].value})
     router.push("/admin/add/jee/question-set")
   }
 
