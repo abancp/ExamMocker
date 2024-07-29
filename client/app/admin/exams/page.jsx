@@ -1,11 +1,25 @@
 "use client"
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import Link from "next/link"
 import Header from "../../../components/Admin/Header"
 import { useRouter } from 'next/navigation'
+import axios from 'axios'
+import SERVER_URL from '../../../config/serverUrl'
 
 function Admin() {
+
     const router = useRouter()
+
+    const [exams,setExams] = useState([])
+
+    useEffect(()=>{
+        axios.get(SERVER_URL+"/ready-exams").then(({data})=>{
+            if(data.success){
+                setExams(data.exams)
+            }
+        })
+    },[])
     return (
         <div className="w-full">
             <Header />
@@ -22,11 +36,13 @@ function Admin() {
                                 <th>Creator</th>
                                 <th>Options</th>
                             </tr>
-                            <tr onClick={()=>router.push("/admin/add/jee/question-set/")} className='text-center text-lg p-2 border-b border-[#259ac4]'>
+                            {
+                                exams?.map((exam)=>(
+                                    <tr onClick={()=>router.push("/admin/exam/"+exam._id)} className='text-center text-lg p-2 border-b border-[#259ac4]'>
                                 <td className='text-[#259ac4]'>1</td>
-                                <td>22/04/1242 2:30</td>
+                                <td>{exam.date}</td>
                                 <td>Upcoming</td>
-                                <td>JEE</td>
+                                <td>{exam.exam}</td>
                                 <td>100%</td>
                                 <td>Aban Muhammed C P</td>
                                 <td className='flex justify-center gap-2 pt-[.35rem]'>
@@ -39,6 +55,9 @@ function Admin() {
                                     </svg>
                                 </td>
                             </tr>
+                                ))
+                            }
+                            
 
                         </tbody>
                     </table>

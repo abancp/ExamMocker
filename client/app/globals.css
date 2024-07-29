@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -40,4 +41,10 @@ html{
   height: 2rem;
   -webkit-clip-path: polygon(0 0, 100% 20%, 100% 80%, 0% 100%);
   clip-path: polygon(0 0, 100% 20%, 100% 80%, 0% 100%);
+}
+
+.loading-heading{
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 900;
+  font-style: normal;
 }

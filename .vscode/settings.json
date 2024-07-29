@@ -10,8 +10,10 @@
         "extralight",
         "godotenv",
         "keam",
+        "mathjax",
         "neet",
-        "Signup"
+        "Signup",
+        "sonner"
     ],
     "[go]":{
         "editor.formatOnSave": false
