@@ -12,6 +12,7 @@ import (
 )
 
 type QuestionBody struct {
+	Id       string    `json:"_id"`
 	Type     string    `json:"type"`
 	Question string    `json:"question"`
 	Options  [4]string `json:"options"`
@@ -31,15 +32,15 @@ func GetQuestions(c *gin.Context) {
 	if search != "" {
 		if subject != "" {
 			if topic != "" {
-				filter = bson.M{"topic": topic, "subject": subject, "question": bson.M{"$regex":search, "$options": "i"}}
+				filter = bson.M{"topic": topic, "subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
 			} else {
-				filter = bson.M{"subject": subject, "question": bson.M{"$regex":search, "$options": "i"}}
+				filter = bson.M{"subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
 			}
 		} else {
 			if topic != "" {
-				filter = bson.M{"topic": topic, "question": bson.M{"$regex":search, "$options": "i"}}
+				filter = bson.M{"topic": topic, "question": bson.M{"$regex": search, "$options": "i"}}
 			} else {
-				filter = bson.M{"question": bson.M{"$regex":search, "$options": "i"}}
+				filter = bson.M{"question": bson.M{"$regex": search, "$options": "i"}}
 			}
 		}
 	} else {
