@@ -8,27 +8,58 @@ import Link from 'next/link'
 import useDebounce from "../../../../../../hooks/useDebounce"
 import { MathJax, MathJaxContext } from 'better-react-mathjax'
 import { toast } from 'sonner'
+import { useParams } from 'next/navigation'
 
 function page() {
   //M:Mathematics | P:Physics | C:Chemistry
   const [subject, setSubject] = useState("mathematics")
   //Q:Question  | A:Option A  |  B:Option B   |  C:Option C   |  D:Option D
+  const [canEdit, setCanEdit] = useState(false)
   const [questionType, setQuestionType] = useState("Q")
-  const [questionNumber, setQuestionNumber] = useState(1)
-  const [lastIndexes, setLastIndexes] = useState({ mathematics: 1, physics: 1, chemistry: 1 })
+  const [questionNumber, setQuestionNumber] = useState(0)
+  const [lastIndexes, setLastIndexes] = useState({ mathematics: 0, physics: 0, chemistry: 0 })
   const [lastType, setLastType] = useState({})
-  const questionsIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+  const questionsIndex = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState(null)
-  const [exam,setExam] = useState({ mathematics: {}, physics: {}, chemistry: {} })
+  const [exam, setExam] = useState({ mathematics: [], physics: [], chemistry: [] })
   const [topics, setTopics] = useState({ mathematics: [], physics: [], chemistry: [] })
   const [topic, setTopic] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
-  const [saving,setSaving] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [questionIds] = useState({ mathematics: [], physics: [], chemistry: [] })
+  // const [isLoading,setIsLoading] = useState(false)
+  const { examId } = useParams()
 
   const debounce = useDebounce()
 
   useEffect(() => {
+    axios.get(SERVER_URL + "/admin/exam/" + examId).then(({ data }) => {
+      if (data.success) {
+        let fetchedExam = data.exam?.questions
+        console.log(data.exam)
+        if (fetchedExam?.mathematics?.length == 1) {
+          if (JSON.stringify(fetchedExam?.mathematics[0]) === '{}') {
+            fetchedExam.mathematics = []
+          }
+        }
+        if (fetchedExam?.physics?.length == 1) {
+          if (JSON.stringify(fetchedExam?.physics[0]) === '{}') {
+            fetchedExam.physics = []
+          }
+        }
+        if (fetchedExam?.chemistry?.length == 1) {
+          if (JSON.stringify(fetchedExam?.chemistry[0]) === '{}') {
+            fetchedExam.chemistry = []
+          }
+        }
+        setExam(fetchedExam)
+        setCurrentQuestion(fetchedExam.mathematics[0])
+        setCanEdit(true)
+      } else {
+        canEdit(true)
+      }
+    })
     axios.get(SERVER_URL + "/admin/topics").then(({ data }) => {
       setTopics(data.topics)
     })
@@ -40,23 +71,31 @@ function page() {
     })
   }, [topic, subject])
 
+  useEffect(() => { console.log(exam) }, [subject, questionNumber])
+
   const changeSubject = (e) => {
+    if (!canEdit) {
+      return
+    }
     addCurrentQuestionToExam()
     setCurrentQuestion(null)
     lastIndexes[subject] = questionNumber
     setSubject(e.target.id)
     setQuestionNumber(lastIndexes[e.target.id])
-    if (exam[e.target.id[lastIndexes[e.target.id]]]) {
+    if (exam[e.target.id][lastIndexes[e.target.id]]) {
       setCurrentQuestion(exam[e.target.id][lastIndexes[e.target.id]])
     }
   }
 
   const changeQuestionNumber = (e) => {
+    if (!canEdit) {
+      return
+    }
     addCurrentQuestionToExam()
     setCurrentQuestion(null)
     lastType[questionNumber + subject] = questionType
     setQuestionNumber(Number(e.target.id))
-    console.log(exam);
+    console.log(exam[subject]);
     if (exam[subject][e.target.id]) {
       setCurrentQuestion(exam[subject][e.target.id])
     }
@@ -68,39 +107,60 @@ function page() {
   }
 
   const addCurrentQuestionToExam = () => {
+    if (!canEdit) {
+      return
+    }
     if (currentQuestion) {
       console.log(subject)
       exam[subject][questionNumber] = currentQuestion
+      questionIds[subject][questionNumber] = currentQuestion._id
       console.log(exam)
+      console.log(questionIds)
     } else {
       console.log("no question for save")
     }
   }
 
   const save = () => {
+    if (!canEdit) {
+      return
+    }
+    setCanEdit(false)
+    console.log(questionIds)
     setSaving(true)
-     setTimeout(()=>{ axios.post(SERVER_URL+"/admin/exam/save",exam,{withCredentials:true}).then(({data})=>{
+    addCurrentQuestionToExam()
+    axios.post(SERVER_URL + "/admin/exam/save/" + examId, { questions: questionIds }, { withCredentials: true }).then(({ data }) => {
       setSaving(false)
-      if(data.success){
-        console.log("Saved Successfully")
-      }else{
+      if (data.success) {
+        toast.success("Saved Successfully")
+        setCanEdit(true)
+      } else {
         toast.error(data.message || "something went wrong")
+        setCanEdit(true)
       }
-    })},1000)
-   
+    }).catch(() => {
+      setSaving(false)
+      setCanEdit(true)
+      toast.error("something went wrong!")
+    })
+
   }
 
   const searchQuestions = async (search, subjectForSearch, topicForSearch) => {
+    if (!canEdit) {
+      return
+    }
     console.log(`searching for subject : ${subjectForSearch} , topic : ${topicForSearch} , query : ${search}`)
     axios.get(`${SERVER_URL}/admin/questions?subject=${subjectForSearch}&topic=${topicForSearch}&search=${search}`).then(({ data }) => {
       setQuestions(data.questions)
     })
   }
 
-  const debounceGetQuestions = useCallback(debounce(searchQuestions, 200), [])
+  const debounceGetQuestions = useCallback(debounce(searchQuestions, 200))
 
   return (
     <MathJaxContext>
+      { }
       <div className='min-h-screen max-h-fit flex flex-col pb-3 gap-2 pt-[2.7rem] px-3 w-full'>
         <Header />
         <div className='w-full  items-center flex justify-around '>
@@ -110,8 +170,8 @@ function page() {
         </div>
         <div className='flex  gap-[.7rem]  w-full justify-center items-center '>
           {
-            questionsIndex.map((questionIndex) => (
-              <div onClick={changeQuestionNumber} key={questionIndex} id={questionIndex} className={` ${questionNumber === questionIndex && "bg-[#21213b] text-[#259ac4]"} cursor-pointer hover:bg-[#21213b] duration-300  flex justify-center items-center w-9 h-9 border border-[#259ac4]`}>{questionIndex}</div>
+            questionsIndex.map((questionIndex, i) => (
+              <div onClick={changeQuestionNumber} key={questionIndex} id={i} className={` ${questionNumber === questionIndex && "bg-[#21213b] text-[#259ac4]"} cursor-pointer hover:bg-[#21213b] duration-300  flex justify-center items-center w-9 h-9 border border-[#259ac4]`}>{questionIndex + 1}</div>
             ))
           }
         </div>
@@ -138,13 +198,13 @@ function page() {
             </select>
           </div>
 
-          <button onClick={()=>(save())} className={`${saving && 'opacity-70'} py-[.279rem] px-2 border border-[#259ac4] font-bold text-lg bg-[#259ac4]`}>Save</button>
+          <button onClick={() => (save())} className={`${saving && 'opacity-70'} py-[.279rem] px-2 border border-[#259ac4] font-bold text-lg bg-[#259ac4]`}>{saving ? 'saving..' : "save"}</button>
 
         </div>
 
         <div className='border p-2 border-[#259ac4] flex flex-col gap-2 h-full w-full'>
           <div className='border border-[#40c425] flex justify-center items-center border-dashed min-h-20 max-h-fit px-3 w-full'>
-            {currentQuestion ?
+            {currentQuestion && JSON.stringify(currentQuestion) !== '{}' ?
               <div className='w-full py-2 pb-0'>
                 <h1 className=' text-center w-full text-xl font-semibold'>Question</h1>
                 <div className='flex gap-3'><div className='text-lg font-medium'>Q:</div><div className='font-light'><MathJax>{currentQuestion?.question}</MathJax></div></div>
@@ -154,7 +214,7 @@ function page() {
               </div> :
               <h1 className="text-3xl font-semibold text-[#259ac481]">Question Is Here</h1>}
           </div>
-          { 
+          {
             questions?.map((question) => (
               <div href={'/admin/question/' + question._id} className='border-[#259ac4] w-full flex justify-between  p-2 border'>
                 <div onClick={() => { setCurrentQuestion(question) }} className="whitespace-nowrap overflow-hidden w-full text-ellipsis"><MathJax>{question.question}</MathJax></div>
