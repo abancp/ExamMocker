@@ -12,35 +12,27 @@ import (
 	"github.com/joho/godotenv"
 )
 
+
 func main() {
 
-	// Load the .env file
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatalf("Error loading .env file: %v", err)
-    }
-	
-	//connect to mongodb
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	config.ConnectDb()
 
-	// Initialize a Gin router
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"https://exam-mocker.vercel.app","http://localhost:3000"},
-        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-        ExposeHeaders:    []string{"Content-Length"},
-        AllowCredentials: true,
-        MaxAge:           12 * time.Hour,
-    }))
-
-	//routes
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello, World!",
-		})
-	})
+		AllowOrigins:     []string{"https://exam-mocker.vercel.app", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	auth.Auth(r)
 	exam.Exam(r)

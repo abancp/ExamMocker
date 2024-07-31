@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"server/config"
 	"time"
 
@@ -16,16 +17,12 @@ import (
 
 // var jwtSecret = []byte("my_secret_key")
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 type SignupUser struct {
 	Email string `json:"email"`
 	Name string `json:"name"`
 	Password string `json:"password"`
 	State string `json:"state"`
+	Admin bool `json:"admin"`
 }
 
 type Token struct {
@@ -34,14 +31,12 @@ type Token struct {
 
 type Claims struct {
 	Username string `json:"username"`
+	Email string `json:"email"`
 	jwt.StandardClaims
 }
 
 
-func Auth(r *gin.Engine) {
-	r.POST("/login",Login)
-	r.POST("/signup",Signup)
-}
+
 
 func Login(c *gin.Context){
 	var user SignupUser
@@ -72,19 +67,20 @@ func Login(c *gin.Context){
 		return
 	}
 	
-	var jwtKey = []byte("JWT_SECRET_KEY")
+	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true
 	claims["username"] = user.Name
+	claims["email"] = user.Email
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError,gin.H{"error":"Something went wrong"})
 		return
 	}
-	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,false,true)
-	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,false,true)
+	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,true,false)
+	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,true,false)
 	user.Password = ""
 	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
 
@@ -96,6 +92,7 @@ func Signup(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	user.Admin = false
 
 	db := config.DB
 
@@ -136,6 +133,7 @@ func Signup(c *gin.Context){
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true
 	claims["username"] = user.Name
+	claims["email"] = user.Email
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
@@ -147,4 +145,24 @@ func Signup(c *gin.Context){
 	user.Password = ""
 	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
 
+}
+
+func ValidateToken(c *gin.Context){
+	tokenString,err := c.Cookie("token")
+	if err != nil{
+		c.JSON(http.StatusUnauthorized,gin.H{"error":"unauthorized"})
+		return
+	}
+	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+        return jwtKey, nil
+    })
+
+	if err != nil || !token.Valid{
+		c.JSON(http.StatusUnauthorized,gin.H{"error":"unauthorized"})
+		return
+	}	
+	c.JSON(http.StatusOK,gin.H{"success":true,"claims":claims})
 }
