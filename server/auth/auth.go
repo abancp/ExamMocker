@@ -76,8 +76,8 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
-	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
-	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
+	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("SERVER_DOMAIN"), true, false)
+	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("SERVER_DOMAIN"), true, false)
 	user.Password = ""
 	c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
 
@@ -137,8 +137,8 @@ func Signup(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
-	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
-	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
+	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("SERVER_DOMAIN"), true, false)
+	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("SERVER_DOMAIN"), true, false)
 	user.Password = ""
 	c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
 
