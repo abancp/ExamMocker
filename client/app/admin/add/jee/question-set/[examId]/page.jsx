@@ -34,7 +34,7 @@ function page() {
   const debounce = useDebounce()
 
   useEffect(() => {
-    axios.get(SERVER_URL + "/admin/exam/" + examId).then(({ data }) => {
+    axios.get(SERVER_URL + "/admin/exam/" + examId,{withCredentials:true}).then(({ data }) => {
       if (data.success) {
         let fetchedExam = data.exam?.questions
         console.log(data.exam)
@@ -60,13 +60,13 @@ function page() {
         canEdit(true)
       }
     })
-    axios.get(SERVER_URL + "/admin/topics").then(({ data }) => {
+    axios.get(SERVER_URL + "/admin/topics",{withCredentials:true}).then(({ data }) => {
       setTopics(data.topics)
     })
   }, [])
 
   useEffect(() => {
-    axios.get(`${SERVER_URL}/admin/questions?subject=${subject}&topic=${topic}`).then(({ data }) => {
+    axios.get(`${SERVER_URL}/admin/questions?subject=${subject}&topic=${topic}`,{withCredentials:true}).then(({ data }) => {
       setQuestions(data.questions)
     })
   }, [topic, subject])

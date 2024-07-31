@@ -1,6 +1,20 @@
+"use client"
+import { useEffect, useState } from "react"
 import Link from "next/link";
+import Cookies from 'js-cookie';
+import SERVER_URL from "../config/serverUrl";
+import axios from "axios";
 
 function Header() {
+
+    const [name, setName] = useState(null)
+
+    useEffect(() => {
+        axios.get(SERVER_URL + "/validate-token", { withCredentials: true }).then(({ data }) => {
+            setName(data.claims.username)
+        })
+    }, [])
+
     return (
         <div className=" fixed top-5 left-0 flex justify-center items-center w-full">
             <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[90%] h-11 border border-[#259ac4]">
@@ -21,8 +35,9 @@ function Header() {
                 </div>
 
                 <div className="flex rounded-full border-x border-[#259ac4]">
-                    <Link href={'/signup'} className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full ">Signup</Link>
-                    <Link href={'/login'} className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full ">Login</Link>
+                    {name ? null : <Link href={'/signup'} className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full ">Signup</Link>}
+                    {name ? null : <Link href={'/login'} className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full ">Login</Link>}
+                    {name && <Link href={'/login'} className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full ">{name}</Link>}
                 </div>
                 <div className="rounded-full flex justify-center items-center cursor-pointer  border-l border-[#259ac4] w-11 h-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class=" font-thin bi bi-brightness-high" viewBox="0 0 16 16">
