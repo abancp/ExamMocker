@@ -18,30 +18,27 @@ import (
 // var jwtSecret = []byte("my_secret_key")
 
 type SignupUser struct {
-	Email string `json:"email"`
-	Name string `json:"name"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
 	Password string `json:"password"`
-	State string `json:"state"`
-	Admin bool `json:"admin"`
+	State    string `json:"state"`
+	Admin    bool   `json:"admin"`
 }
 
 type Token struct {
 	Token string `json:"token"`
-} 
+}
 
 type Claims struct {
 	Username string `json:"username"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	jwt.StandardClaims
 }
 
-
-
-
-func Login(c *gin.Context){
+func Login(c *gin.Context) {
 	var user SignupUser
-	if err := c.ShouldBindJSON(&user); err != nil{
-		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -49,24 +46,24 @@ func Login(c *gin.Context){
 
 	db := config.DB
 
-	err := db.Collection("users").FindOne(context.Background(),bson.M{"email":user.Email}).Decode(&user)
-	if err != nil{
-		if err == mongo.ErrNoDocuments{
-			c.JSON(http.StatusUnauthorized,gin.H{"error":"password not matching or user not found"})
+	err := db.Collection("users").FindOne(context.Background(), bson.M{"email": user.Email}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "password not matching or user not found"})
 			return
-		}else{
-			c.JSON(http.StatusInternalServerError,gin.H{"error":"Database error"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 			return
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized,gin.H{"error":"password not matching or user not found"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "password not matching or user not found"})
 		return
 	}
-	
+
 	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
@@ -76,19 +73,19 @@ func Login(c *gin.Context){
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"Something went wrong"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
-	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,true,false)
-	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,true,false)
+	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
+	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
 	user.Password = ""
-	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
+	c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
 
 }
 
-func Signup(c *gin.Context){
+func Signup(c *gin.Context) {
 	var user SignupUser
-	if err := c.ShouldBindJSON(&user); err != nil{
+	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -101,28 +98,28 @@ func Signup(c *gin.Context){
 	}}
 
 	count, err := db.Collection("users").CountDocuments(context.Background(), filter)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-			return
-		}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
 
 	if count > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User already exists"})
 		return
 	}
 
-	hashPassword , err := bcrypt.GenerateFromPassword([]byte(user.Password),bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"something went wrong"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong"})
 		return
 	}
 
 	user.Password = string(hashPassword)
 
-	result ,err := db.Collection("users").InsertOne(context.Background(),user)
+	result, err := db.Collection("users").InsertOne(context.Background(), user)
 
-	if err != nil{
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"Database error"})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
 
@@ -137,32 +134,32 @@ func Signup(c *gin.Context){
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"Something went wrong"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
-	c.SetCookie("name",user.Name ,1000000, "/" , "localhost" ,false,true)
-	c.SetCookie("token",tokenString ,1000000, "/" , "localhost" ,false,true)
+	c.SetCookie("name", user.Name, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
+	c.SetCookie("token", tokenString, 1000000, "/", os.Getenv("CLIENT_DOMAIN"), true, false)
 	user.Password = ""
-	c.JSON(http.StatusOK,gin.H{"success":true,"user":user})
+	c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
 
 }
 
-func ValidateToken(c *gin.Context){
-	tokenString,err := c.Cookie("token")
-	if err != nil{
-		c.JSON(http.StatusUnauthorized,gin.H{"error":"unauthorized"})
+func ValidateToken(c *gin.Context) {
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-        return jwtKey, nil
-    })
+		return jwtKey, nil
+	})
 
-	if err != nil || !token.Valid{
-		c.JSON(http.StatusUnauthorized,gin.H{"error":"unauthorized"})
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
-	}	
-	c.JSON(http.StatusOK,gin.H{"success":true,"claims":claims})
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "claims": claims})
 }
