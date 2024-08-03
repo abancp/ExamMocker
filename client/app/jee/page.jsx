@@ -11,7 +11,6 @@ function Jee() {
                 <div className="w-full flex flex-col px-4">
                 <ExamList/>
                 </div>
-                
             </div>
         </div>
     )

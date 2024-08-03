@@ -27,7 +27,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/jee/register/page.jsx"  ],
+, "app/jee/register/[examId]/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]
