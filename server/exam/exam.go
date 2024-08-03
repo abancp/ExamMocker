@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type RegisterExamBody struct {
+type ExamBody struct {
 	Exam      string `json:"exam"`
 	Date      string `json:"date"`
 	Questions struct {
@@ -23,9 +23,13 @@ type RegisterExamBody struct {
 	TotalQuestions int `json:"totalQuestions"`
 }
 
+type RegisterExamBody struct {
+	Email string `json:"email"`
+}
+
 func AddExam(c *gin.Context) {
 
-	var body RegisterExamBody
+	var body ExamBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -290,13 +294,13 @@ func SaveExam(c *gin.Context) {
 		return
 	}
 
-	var body RegisterExamBody
+	var body ExamBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var exam RegisterExamBody
+	var exam ExamBody
 	err = db.Collection("exams").FindOne(context.Background(), bson.M{"_id": _id}).Decode(&exam)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -330,18 +334,18 @@ func SaveExam(c *gin.Context) {
 
 	totalQuestions := 0
 
-	for _,mathematicsQID := range exam.Questions.Mathematics{
-		if mathematicsQID != ""{
+	for _, mathematicsQID := range exam.Questions.Mathematics {
+		if mathematicsQID != "" {
 			totalQuestions++
 		}
 	}
-	for _,physicsQID := range exam.Questions.Physics{
-		if physicsQID != ""{
+	for _, physicsQID := range exam.Questions.Physics {
+		if physicsQID != "" {
 			totalQuestions++
 		}
 	}
-	for _,chemistryQID := range exam.Questions.Chemistry{
-		if chemistryQID  != ""{
+	for _, chemistryQID := range exam.Questions.Chemistry {
+		if chemistryQID != "" {
 			totalQuestions++
 		}
 	}
@@ -353,3 +357,28 @@ func SaveExam(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }
+
+func GetMinimalExam(c *gin.Context) {
+	db := config.DB
+	givenId := c.Param("id")
+	_id, err := primitive.ObjectIDFromHex(givenId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var exam ExamBody
+	err = db.Collection("exams").FindOne(context.Background(), bson.M{"_id": _id}).Decode(&exam)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "exam not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "exam": exam})
+}
+
+// func GetRegisteredExams(c *gin.Context){
+
+// }

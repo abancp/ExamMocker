@@ -10,7 +10,8 @@ func Exam(r *gin.Engine) {
 
 	userProtected := r.Group("/",auth.AuthMiddleware("user"))
 	userProtected.GET("/ready-exams",GetReadyExams)
-	userProtected.POST("/register/:exam",Register)
+	userProtected.GET("/exam-minimal/:id",GetMinimalExam)
+	userProtected.POST("/register-exam/:exam/:id",Register)
 
 	
 	adminProtected := r.Group("/admin",auth.AuthMiddleware("admin"))

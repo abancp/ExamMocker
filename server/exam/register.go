@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RegisterData struct {
@@ -22,14 +23,19 @@ func Register(c *gin.Context) {
 	}
 
 	exam := c.Param("exam")
+	id := c.Param("id")
+	_id, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	db := config.DB
-
 	switch exam {
 	case "jee":
 		{
 
 			filter := bson.M{"$or": []bson.M{
-				{"email": body.Email},
+				{"email": body.Email,"exam":_id},
 			}}
 
 			count, err := db.Collection("jee-users").CountDocuments(context.Background(), filter)
