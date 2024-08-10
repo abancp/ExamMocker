@@ -34,7 +34,7 @@ function page() {
   const debounce = useDebounce()
 
   useEffect(() => {
-    axios.get(SERVER_URL + "/admin/exam/" + examId,{withCredentials:true}).then(({ data }) => {
+    axios.get(SERVER_URL + "/exam/" + examId,{withCredentials:true}).then(({ data }) => {
       if (data.success) {
         let fetchedExam = data.exam?.questions
         console.log(data.exam)

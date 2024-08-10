@@ -8,11 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RegisterData struct {
 	Email string `json:"email"`
+	Id    string `bson:"exam"`
 }
 
 func Register(c *gin.Context) {
@@ -24,18 +24,14 @@ func Register(c *gin.Context) {
 
 	exam := c.Param("exam")
 	id := c.Param("id")
-	_id, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+
 	db := config.DB
 	switch exam {
 	case "jee":
 		{
 
 			filter := bson.M{"$or": []bson.M{
-				{"email": body.Email,"exam":_id},
+				{"email": body.Email, "exam": id},
 			}}
 
 			count, err := db.Collection("jee-users").CountDocuments(context.Background(), filter)
@@ -45,11 +41,12 @@ func Register(c *gin.Context) {
 			}
 
 			if count > 0 {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "User already registered for jee exam"})
+				c.JSON(http.StatusBadRequest, gin.H{"error": "User already registered for this exam"})
 				return
 			}
 			var registerData RegisterData
 			registerData.Email = body.Email
+			registerData.Id = id
 			result, err := db.Collection("jee-users").InsertOne(context.Background(), registerData)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
@@ -60,7 +57,7 @@ func Register(c *gin.Context) {
 		}
 	default:
 		{
-			c.JSON(http.StatusInternalServerError,gin.H{"error":"Invalid exam"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid exam"})
 		}
 	}
 }

@@ -11,7 +11,7 @@ function page(){
     const {id} = useParams()
 
     useEffect(()=>{
-        axios.get(SERVER_URL+"/admin/exam/"+id).then(({data})=>{
+        axios.get(SERVER_URL+"/exam/"+id).then(({data})=>{
             if(data.success){
                 setExam(data.exam)
                 console.log(data.exam)

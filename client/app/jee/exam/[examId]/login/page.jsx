@@ -1,18 +1,20 @@
 "use client"
 import React from "react"
 
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 
 function JeeExamLogin() {
 
     const router = useRouter()
+    const {examId} = useParams()
+
 
     const Login = (e) => {
         e.preventDefault()
         document.documentElement.requestFullscreen().catch((err) => {
             console.error(`Error attempting to enable full-screen mode: ${err.message}`);
         });
-        router.push("/jee/exam")
+        router.push("/jee/exam/"+examId)
     }
     return (
         <div className="h-screen bg-white gap-3 flex flex-col justify-start items-center pt-[10rem] w-full">

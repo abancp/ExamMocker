@@ -225,6 +225,222 @@ func GetExam(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "exam": results[0]})
 }
 
+func GetStudentExam(c *gin.Context) {
+	db := config.DB
+	givenId := c.Param("id")
+	_id, err := primitive.ObjectIDFromHex(givenId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	pipeline := mongo.Pipeline{
+		// Match the document by _id
+		bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: _id}}}},
+
+		// Project required fields
+		bson.D{{Key: "$project", Value: bson.D{
+			{Key: "exam", Value: 1},
+			{Key: "date", Value: 1},
+			{Key: "totalQuestions", Value: 1},
+			{Key: "mathematics", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$questions.mathematics", bson.A{}}}}},
+			{Key: "physics", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$questions.physics", bson.A{}}}}},
+			{Key: "chemistry", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$questions.chemistry", bson.A{}}}}},
+		}}},
+
+		// Replace empty strings with null in the mathematics array
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "mathematics", Value: bson.D{
+				{Key: "$map", Value: bson.D{
+					{Key: "input", Value: "$mathematics"},
+					{Key: "as", Value: "item"},
+					{Key: "in", Value: bson.D{
+						{Key: "$cond", Value: bson.A{
+							bson.D{{Key: "$ne", Value: bson.A{"$$item", ""}}},
+							"$$item",
+							nil,
+						}},
+					}},
+				}},
+			}},
+		}}},
+
+		// Replace empty strings with null in the physics array
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "physics", Value: bson.D{
+				{Key: "$map", Value: bson.D{
+					{Key: "input", Value: "$physics"},
+					{Key: "as", Value: "item"},
+					{Key: "in", Value: bson.D{
+						{Key: "$cond", Value: bson.A{
+							bson.D{{Key: "$ne", Value: bson.A{"$$item", ""}}},
+							"$$item",
+							nil,
+						}},
+					}},
+				}},
+			}},
+		}}},
+
+		// Replace empty strings with null in the chemistry array
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "chemistry", Value: bson.D{
+				{Key: "$map", Value: bson.D{
+					{Key: "input", Value: "$chemistry"},
+					{Key: "as", Value: "item"},
+					{Key: "in", Value: bson.D{
+						{Key: "$cond", Value: bson.A{
+							bson.D{{Key: "$ne", Value: bson.A{"$$item", ""}}},
+							"$$item",
+							nil,
+						}},
+					}},
+				}},
+			}},
+		}}},
+
+		// Unwind and lookup for mathematics
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$mathematics"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "mathObjectID", Value: bson.D{{Key: "$toObjectId", Value: "$mathematics"}}},
+		}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "questions"},
+			{Key: "localField", Value: "mathObjectID"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "mathDocs"},
+		}}},
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$mathDocs"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$_id"},
+			{Key: "exam", Value: bson.D{{Key: "$first", Value: "$exam"}}},
+			{Key: "date", Value: bson.D{{Key: "$first", Value: "$date"}}},
+			{Key: "totalQuestions", Value: bson.D{{Key: "$first", Value: "$totalQuestions"}}},
+			{Key: "mathematics", Value: bson.D{{Key: "$push", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$mathDocs", bson.D{}}}}}}},
+			{Key: "physics", Value: bson.D{{Key: "$first", Value: "$physics"}}},
+			{Key: "chemistry", Value: bson.D{{Key: "$first", Value: "$chemistry"}}},
+		}}},
+
+		// Unwind and lookup for physics
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$physics"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "physicsObjectID", Value: bson.D{{Key: "$toObjectId", Value: "$physics"}}},
+		}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "questions"},
+			{Key: "localField", Value: "physicsObjectID"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "physicsDocs"},
+		}}},
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$physicsDocs"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$_id"},
+			{Key: "exam", Value: bson.D{{Key: "$first", Value: "$exam"}}},
+			{Key: "date", Value: bson.D{{Key: "$first", Value: "$date"}}},
+			{Key: "totalQuestions", Value: bson.D{{Key: "$first", Value: "$totalQuestions"}}},
+			{Key: "mathematics", Value: bson.D{{Key: "$first", Value: "$mathematics"}}},
+			{Key: "physics", Value: bson.D{{Key: "$push", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$physicsDocs", bson.D{}}}}}}},
+			{Key: "chemistry", Value: bson.D{{Key: "$first", Value: "$chemistry"}}},
+		}}},
+
+		// Unwind and lookup for chemistry
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$chemistry"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$addFields", Value: bson.D{
+			{Key: "chemistryObjectID", Value: bson.D{{Key: "$toObjectId", Value: "$chemistry"}}},
+		}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "questions"},
+			{Key: "localField", Value: "chemistryObjectID"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "chemistryDocs"},
+		}}},
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$chemistryDocs"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		bson.D{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$_id"},
+			{Key: "exam", Value: bson.D{{Key: "$first", Value: "$exam"}}},
+			{Key: "date", Value: bson.D{{Key: "$first", Value: "$date"}}},
+			{Key: "totalQuestions", Value: bson.D{{Key: "$first", Value: "$totalQuestions"}}},
+			{Key: "mathematics", Value: bson.D{{Key: "$first", Value: "$mathematics"}}},
+			{Key: "physics", Value: bson.D{{Key: "$first", Value: "$physics"}}},
+			{Key: "chemistry", Value: bson.D{{Key: "$push", Value: bson.D{{Key: "$ifNull", Value: bson.A{"$chemistryDocs", bson.D{}}}}}}},
+		}}},
+
+		// Combine arrays into a single questions object
+		// ... previous stages ...
+
+		// Combine arrays into a single questions object
+		bson.D{{Key: "$project", Value: bson.D{
+			{Key: "exam", Value: 1},
+			{Key: "date", Value: 1},
+			{Key: "totalQuestions", Value: 1},
+			{Key: "questions", Value: bson.D{
+				{Key: "mathematics", Value: bson.D{
+					{Key: "$map", Value: bson.D{
+						{Key: "input", Value: "$mathematics"},
+						{Key: "as", Value: "item"},
+						{Key: "in", Value: bson.D{
+							{Key: "_id", Value: "$$item._id"},
+							{Key: "options", Value: "$$item.options"},
+							{Key: "question", Value: "$$item.question"},
+							{Key: "subject", Value: "$$item.subject"},
+							{Key: "topic", Value: "$$item.topic"},
+							{Key: "type", Value: "$$item.type"},
+						}},
+					}},
+				}},
+				{Key: "physics", Value: bson.D{
+					{Key: "$map", Value: bson.D{
+						{Key: "input", Value: "$physics"},
+						{Key: "as", Value: "item"},
+						{Key: "in", Value: bson.D{
+							{Key: "_id", Value: "$$item._id"},
+							{Key: "options", Value: "$$item.options"},
+							{Key: "question", Value: "$$item.question"},
+							{Key: "subject", Value: "$$item.subject"},
+							{Key: "topic", Value: "$$item.topic"},
+							{Key: "type", Value: "$$item.type"},
+						}},
+					}},
+				}},
+				{Key: "chemistry", Value: bson.D{
+					{Key: "$map", Value: bson.D{
+						{Key: "input", Value: "$chemistry"},
+						{Key: "as", Value: "item"},
+						{Key: "in", Value: bson.D{
+							{Key: "_id", Value: "$$item._id"},
+							{Key: "options", Value: "$$item.options"},
+							{Key: "question", Value: "$$item.question"},
+							{Key: "subject", Value: "$$item.subject"},
+							{Key: "topic", Value: "$$item.topic"},
+							{Key: "type", Value: "$$item.type"},
+						}},
+					}},
+				}},
+			}},
+		}}},
+	}
+
+	cursor, err := db.Collection("exams").Aggregate(context.Background(), pipeline)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error!"})
+		return
+	}
+	defer cursor.Close(context.Background())
+
+	var results []bson.M
+	if err = cursor.All(context.Background(), &results); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error!"})
+		return
+	}
+
+	if len(results) < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "exam not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "exam": results[0]})
+}
+
 func GetExams(c *gin.Context) {
 	db := config.DB
 	var results []bson.M
@@ -261,6 +477,10 @@ func GetReadyExams(c *gin.Context) {
 
 	cursor, err := db.Collection("exams").Find(context.Background(), filter)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusOK, gin.H{"success": true, "exams": results})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database Error"})
 		return
 	}
@@ -379,6 +599,48 @@ func GetMinimalExam(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "exam": exam})
 }
 
-// func GetRegisteredExams(c *gin.Context){
+func GetRegisteredExams(c *gin.Context) {
+	userEmail, exist := c.Get("userEmail")
+	if !exist {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+		return
+	}
+	exam := c.Param("exam")
+	db := config.DB
+	switch exam {
+	case "jee":
+		{
 
-// }
+			pipeline := mongo.Pipeline{
+				bson.D{{Key: "$match", Value: bson.M{"email": userEmail}}},
+				bson.D{{Key: "$group", Value: bson.D{
+					{Key: "_id", Value: nil},
+					{Key: "exams", Value: bson.D{{Key: "$push", Value: "$exam"}}},
+				}}},
+				bson.D{{Key: "$project", Value: bson.D{
+					{Key: "_id", Value: 0},
+					{Key: "exams", Value: 1},
+				}}},
+			}
+
+			cursor, err := db.Collection("jee-users").Aggregate(context.Background(), pipeline)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+				return
+			}
+
+			var results []bson.M
+			if err = cursor.All(context.Background(), &results); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"success": true, "exams": results[0]})
+			return
+		}
+	default:
+		{
+			c.JSON(http.StatusNotFound, gin.H{"error": "invalid exam"})
+			return
+		}
+	}
+}

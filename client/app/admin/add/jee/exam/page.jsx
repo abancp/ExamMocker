@@ -14,7 +14,8 @@ function page() {
 
   const submitHandler = async (e) => {
     e.preventDefault()
-    const { data } = await axios.post(SERVER_URL + '/admin/exam', { exam: e.target[0].value, date: e.target[1].value})
+    console.log({ exam: e.target[0].value, date: e.target[1].value});
+    const { data } = await axios.post(SERVER_URL + '/admin/exam', { exam: e.target[0].value, date: e.target[1].value},{withCredentials:true})
     if(data.success){
       router.push("/admin/add/jee/question-set/"+data.id)
     }else{

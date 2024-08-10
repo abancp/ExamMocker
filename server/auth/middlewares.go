@@ -41,6 +41,7 @@ func AuthMiddleware(role string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		c.Set("userEmail",claims.Email)	
 		if role == "user" {
 			c.Next()
 		} else if role == "admin" {
