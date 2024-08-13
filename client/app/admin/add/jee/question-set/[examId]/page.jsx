@@ -57,7 +57,7 @@ function page() {
         setCurrentQuestion(fetchedExam.mathematics[0])
         setCanEdit(true)
       } else {
-        canEdit(true)
+        setCanEdit(true)
       }
     })
     axios.get(SERVER_URL + "/admin/topics",{withCredentials:true}).then(({ data }) => {
