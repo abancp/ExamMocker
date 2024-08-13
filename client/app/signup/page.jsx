@@ -3,11 +3,18 @@
 import axios from "axios"
 import Link from "next/link"
 import SERVER_URL from "../../config/serverUrl"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 function Signup() {
+    const router = useRouter()
     const handleSubmit = (e) => {
         e.preventDefault()
             const form = e.target
+            if(!( form[0].value && form[1].value && form[2].value && form[3].value && form[4].value && form[5].value)){
+                toast.error("Enter all values to register!")
+                return
+            }
             const user = {
                 name : form[0].value,
                 email : form[1].value,
@@ -17,7 +24,10 @@ function Signup() {
                 state : form[5].value
             }
             axios.post(SERVER_URL+"/signup",user,{withCredentials:true}).then(({data})=>{
-                console.log(data)
+                if (data.success){
+                    toast.success("User registered : "+user.name)
+                    router.push("/")
+                }
             })
             
     }

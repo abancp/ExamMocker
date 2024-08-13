@@ -70,7 +70,7 @@ func GetTopics(c *gin.Context) {
 	err := db.Collection("topics").FindOne(context.Background(), bson.M{"type": "topics"}).Decode(&topic)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			c.JSON(http.StatusNotFound, gin.H{"error": "topics not found"})
+			c.JSON(http.StatusOK, gin.H{"success":true,"topics": topic.Topics})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})

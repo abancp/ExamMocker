@@ -14,7 +14,7 @@ function Admin() {
     const [exams,setExams] = useState([])
 
     useEffect(()=>{
-        axios.get(SERVER_URL+"/ready-exams").then(({data})=>{
+        axios.get(SERVER_URL+"/ready-exams",{withCredentials:true}).then(({data})=>{
             if(data.success){
                 setExams(data.exams)
             }

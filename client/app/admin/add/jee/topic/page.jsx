@@ -12,7 +12,7 @@ function page() {
     }
 
     const addTopic = (subject,topic)=>{
-        axios.post(SERVER_URL+"/admin/topic",{subject,topic}).then(({data})=>{
+        axios.post(SERVER_URL+"/admin/topic",{subject,topic},{withCredentials:true}).then(({data})=>{
             if (data.success){
                 toast.success("Topic added successfully")
             }else{

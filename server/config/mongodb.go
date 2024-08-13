@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,7 +12,8 @@ import (
 var DB *mongo.Database
 
 func ConnectDb() {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://abancpchengani:1%402%40Aban@exammocker.p96oaxc.mongodb.net/?retryWrites=true&w=majority")
+	mongoURL := os.Getenv("MONGO_URL")
+	clientOptions := options.Client().ApplyURI(mongoURL)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		panic(err)

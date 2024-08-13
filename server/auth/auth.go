@@ -136,7 +136,7 @@ func Signup(c *gin.Context) {
 
 	fmt.Println(result)
 
-	var jwtKey = []byte("JWT_SECRET_KEY")
+	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true

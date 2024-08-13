@@ -191,7 +191,7 @@ function page() {
             <select onChange={(e) => { setTopic(e.target.value) }} className='px-1  p-[.35rem] flex items-center justify-center w-60 text-lg  bg-transparent text-white font-light focus:outline-none'>
               <option value={""} className='text-[#2b2b2b91]'>--select topic--</option>
               {
-                topics[subject].map((topic) => (
+                topics[subject]?.map((topic) => (
                   <option className='text-black' value={topic}>{topic}</option>
                 ))
               }

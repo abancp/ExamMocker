@@ -18,7 +18,7 @@ function page() {
     const [topics, setTopics] = useState({ mathematics: [], physics: [], chemistry: [] })
 
     useEffect(() => {
-        axios.get(SERVER_URL + "/admin/topics").then(({ data }) => {
+        axios.get(SERVER_URL + "/admin/topics",{withCredentials:true}).then(({ data }) => {
             setTopics(data.topics)
         })
     }, [])
@@ -135,7 +135,7 @@ function page() {
         question.subject = subject
         question.topic = topic
         if (questionType === "MCQ") {
-            const { data } = await axios.post(SERVER_URL + "/admin/add-question", question)
+            const { data } = await axios.post(SERVER_URL + "/admin/add-question", question,{withCredentials:true})
             if (data.success) {
                 toast.success("Question added successfully")
                 setCurrentTextAreaValue("")
@@ -181,7 +181,7 @@ function page() {
                     <select onChange={(e) => setTopic(e.target.value)} className='w-32 cursor-pointer bg-transparent focus:outline-none' name="" id="">
                         <option className='text-[#2d2d2d94]' selected value={null}>--select topic--</option>
                         {
-                            topics[subject].map((topic) => (
+                            topics[subject]?.map((topic) => (
                                 <option className='text-black bg-transparent' value={topic}>{topic}</option>
                             ))
                         }
@@ -202,5 +202,5 @@ function page() {
         </MathJaxContext>
     )
 }
-
+//TODO : Managing numerical quesions
 export default page

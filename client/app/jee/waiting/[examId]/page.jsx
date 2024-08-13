@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import axios from 'axios'
 import clientUrl from '../../../../config/clientUrl'
 import { toast } from 'sonner'
+import { hash } from 'crypto'
 
 
 function page() {
@@ -14,20 +15,42 @@ function page() {
     const [differenceTimeState, setDifferenceTimeState] = useState(1000000)
     const [startExam, setStartExam] = useState(false)
     const [isExamWindowOpen, setIsExamWindowOpen] = useState(false)
-
+    const [warningTimer, setWarningTimer] = useState(10)
+    const [exam,setExam] = useState({})
 
     const channel = new BroadcastChannel(examId)
-    channel.onmessage = (e) => {
-        if (e.data === "Yes, Iam Open :)") {
-            setIsExamWindowOpen(true)
+        channel.onmessage = (e) => {
+            if (e.data === "Yes, Iam Open :)") {
+                setIsExamWindowOpen(true)
+            }
         }
-    }
+
+    useEffect(()=>{
+        const dbRequest = window.indexedDB.open("examsDB", 1)
+        let exams;
+        dbRequest.onupgradeneeded = (e) => {
+            const db = e.target.result
+            db.createObjectStore('exams', { keyPath: '_id' })
+        }
+        dbRequest.onsuccess = (e) => {
+            const db = e.target.result
+            const transaction = db.transaction('exams', 'readwrite')
+            exams = transaction.objectStore('exams')
+            exam && exams.add(exam)
+        }
+    },[exam])
 
     useEffect(() => {
+        
+        // const testNotification = new window.Notification("Test Notification")
+        // testNotification.addEventListener('show', () => { console.log("opened"); })
         axios.get(SERVER_URL + "/exam/" + examId, { withCredentials: true }).then(({ data }) => {
             if (data.success) {
                 let examDate = new Date(data.exam?.date)
-                window.localStorage.setItem("exam-"+examId,JSON.stringify(data.exam))
+                // window.localStorage.setItem("exam-" + examId, JSON.stringify(data.exam))
+                // console.log(exams);
+                // let t = exams?.add(data.exam)
+                setExam(data.exam)
                 setExamTime(examDate.getTime())
             }
         })
@@ -90,6 +113,9 @@ function page() {
         }
         let c = setInterval(() => {
             setTime((prev) => ({ ...prev, seconds: prev.seconds - 1 }))
+            if (warningTimer > -1) {
+                setWarningTimer(warningTimer - 1)
+            }
         }, 1000)
         return () => clearInterval(c)
 
@@ -131,6 +157,10 @@ function page() {
             {startExam ? <h1 className='font-medium text-6xl text-[#259ac4]'>Exam Started!</h1> : !isNaN(time.days) && <h1 className='font-medium text-6xl text-[#259ac4]'>{time.days} Days {time.hours} Hours {time.minutes} Minutes {time.seconds} Seconds</h1>}
             {startExam || <p className='text-3xl text-[#259ac4] '>left for your exam </p>}
             {differenceTimeState < 900000 && <button className='bg-[#259ac4] p-2 rounded-lg text-lg font-semibold hover:opacity-85 duration-300' onClick={handleClick}>Go To Exam Window</button>}
+
+            {warningTimer > 0 && <div className='w-80 p-2 rounded-lg mt-5  text-black text-lg bg-[#fffb19] text-center'>
+                we will notify through mail before <br /> 1 day , 15 minutes & starting of exam. please turn on notification
+            </div>}
         </div>
     )
 }

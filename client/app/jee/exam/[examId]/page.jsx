@@ -1,4 +1,5 @@
 'use client'
+import {useEffect} from "react"
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import QuestionIcon from "../../../../components/Jee/QuestionIcon"
 import { useState } from "react";
@@ -9,26 +10,131 @@ const JeeExam = () => {
   const {examId} = useParams()
   const [subject,setSubject] = useState("mathematics")
   const [questionIndexesMap,setQuestionIndexesMap] = useState({notVisited:89,notAnswered:1,answered:0,MForReview:0,MForReviewAndA:0})
-  const [questionIndexes] = useState([
+  const [questionIndexes,setQuestionIndexes] = useState({
+"mathematics":[
     2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-  ])
-  const exam = JSON.parse(window.localStorage.getItem("exam-"+examId))
-  console.log(exam);
+  ],
+"physics":[
+      2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+ ],
+"chemistry":[
+      2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+ ]})
+  const [answers,setAnswers] = useState({"mathematics":[],"physics":[],"chemistry":[]})
+  const [exam,setExam] = useState({})
+  const [questions,setQuestions] = useState({"mathematics":[],"physics":[],"chemistry":[]})
+  const [currentQuestion,setCurrentQuestion] = useState()
+  const [currentQuestionIndex,setCurrentQuestionIndex] = useState(0)
+  const [selectedOption,setSelectedOption] = useState(null)
+  let answerStore
+
+  useEffect(()=>{
+    let exams;
+    const dbRequest = window.indexedDB.open("examsDB", 1)
+    const resultDbRequest = window.indexedDB.open("resultsDB", 1)
+    dbRequest.onupgradeneeded = (e) => {
+        const db = e.target.result
+        db.createObjectStore('exams', { keyPath: '_id' })
+    }
+    resultDbRequest.onupgradeneeded = (e) => {
+          const db = e.target.result
+          db.createObjectStore('exams', { keyPath: '_id' })
+    }
+    dbRequest.onsuccess = (e) => {
+        const db = e.target.result
+        const transaction = db.transaction('exams', 'readonly')
+	console.log(transaction)
+        exams = transaction.objectStore('exams')
+        let getReq = exams.get(examId)
+	getReq.onsuccess = (e)=>{
+		setCurrentQuestion(e.target.result?.exam?.questions[subject][0])
+		setQuestions(e.target.result?.exam?.questions)
+	}
+	setCurrentQuestion(questions[subject][0])
+    }
+    resultDbRequest.onsuccess = (e) => {
+          const db = e.target.result
+          const transaction = db.transaction('exams', 'readonly')
+          console.log(transaction)
+          answerStore = transaction.objectStore('exams')
+      }
+
+},[])
+
+	useEffect(()=>{
+		answerStore?.add({"_id":examId,answers})
+	},[answers])
   
-  const [questions,setQuestions] = useState(exam?.questions)
-  const [currentQuestion,setCurrentQuestion] = useState(questions[subject][0])
 
 
   const changeSubject = (e)=>{
     setSubject(e.target.id)
     console.log(e.target.id);
+    console.log(questions)
     setCurrentQuestion(questions[e.target.id][0])
   }
 
   const changeQuestionNumber = (questionIndex)=>{
+    console.log(questions)
+    if (questionIndexes[subject][questionIndex]===1){
+    	questionIndexes[subject][questionIndex] = 2
+    }
+   
+    setCurrentQuestionIndex(questionIndex)
     setCurrentQuestion(questions[subject][questionIndex])
+  }
+
+  const saveAndNext = () =>{
+	  
+	  setQuestionIndexes(prevIndexes => ({
+		    ...prevIndexes,
+		    [subject]: prevIndexes[subject].map((item, i) => 
+ 		     i === currentQuestionIndex ? 3 : item
+  		  )
+  	}))
+	  if(currentQuestionIndex < 29){
+		changeQuestionNumber(currentQuestionIndex+1)
+	  }
+	  
+  }
+  const markForReview = ()=>{
+	  setQuestionIndexes(prevIndexes => ({
+                     ...prevIndexes,
+                     [subject]: prevIndexes[subject].map((item, i) =>
+                      i === currentQuestionIndex ? 4 :item
+                    )
+         }))
+
+        if(currentQuestionIndex < 29){
+		changeQuestionNumber(currentQuestionIndex+1)
+	}	
+  }
+  
+  const saveAndMarkForReview = () =>{
+	setQuestionIndexes(prevIndexes => ({
+                      ...prevIndexes,
+                      [subject]: prevIndexes[subject].map((item, i) =>
+                       i === currentQuestionIndex ? 5: item
+                     )
+          }))
+
+	
+
+  }
+  const  handleOptionChange = (e)=>{
+	setSelectedOption(e.target.value)
+  }
+  const clearOption = ()=>{
+	const inputs =   window.document.getElementsByName("mcq_option")
+	inputs.forEach((option)=>{
+		option.checked = false
+	})
   }
 
   return (
@@ -52,24 +158,24 @@ const JeeExam = () => {
         <div className="px-10 flex gap-3">
           <div className="w-[70%]">
             <div className="flex px-3 py-1 mt-2 justify-between border-b-[1px] border-black items-center">
-              <h1 className="text-lg font-semibold">Question 1:</h1>
+              <h1 className="text-lg font-semibold">Question {currentQuestionIndex+1}:</h1>
               <div className="p-2 py-1 text-white rounded-full bg-blue-700"><h1 className="text-2xl  font-bold">↓</h1></div>
             </div>
             <div className="h-[23rem] border-b border-black overflow-y-scroll">
-              <h1 className="p-3 text-xl font-sans font-semibold"><MathJax>{currentQuestion.question}</MathJax></h1>
+              <h1 className="p-3 text-xl font-sans font-semibold"><MathJax>{currentQuestion?.question}</MathJax></h1>
               <div className="flex flex-col gap-3 p-3 ">
-                <label htmlFor="mcq_option_1" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_1" /><MathJax><h1 className="text-xl font-medium"> (1) <span className="ml-5">{currentQuestion.options[0]}</span></h1></MathJax></label>
-                <label htmlFor="mcq_option_2" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_2" /><MathJax><h1 className="text-xl font-medium"> (2) <span className="ml-5">{currentQuestion.options[1]}</span></h1></MathJax></label>
-                <label htmlFor="mcq_option_3" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_3" /><MathJax><h1 className="text-xl font-medium"> (3) <span className="ml-5">{currentQuestion.options[2]}</span></h1></MathJax></label>
-                <label htmlFor="mcq_option_4" className="w-fit cursor-pointer flex gap-3"><input className="cursor-pointer" type="radio" name="mcq_option" id="mcq_option_4" /><MathJax><h1 className="text-xl font-medium"> (4) <span className="ml-5">{currentQuestion.options[3]}</span></h1></MathJax></label>
+                <label htmlFor="mcq_option_1" className="w-fit cursor-pointer flex gap-3"><input onChange={handleOptionChange}  className="cursor-pointer option-input " type="radio" name="mcq_option" id="mcq_option_1" value="1" /><MathJax><h1 className="text-xl font-medium"> (1) <span className="ml-5">{currentQuestion?.options[0]}</span></h1></MathJax></label>
+                <label htmlFor="mcq_option_2" className="w-fit cursor-pointer flex gap-3"><input onChange={handleOptionChange}   className="cursor-pointer option-input " type="radio" name="mcq_option" id="mcq_option_2" value="2" /><MathJax><h1 className="text-xl font-medium"> (2) <span className="ml-5">{currentQuestion?.options[1]}</span></h1></MathJax></label>
+                <label htmlFor="mcq_option_3" className="w-fit cursor-pointer flex gap-3"><input onChange={handleOptionChange}   className="cursor-pointer option-input" type="radio" name="mcq_option" id="mcq_option_3" value="3"  /><MathJax><h1 className="text-xl font-medium"> (3) <span className="ml-5">{currentQuestion?.options[2]}</span></h1></MathJax></label>
+                <label htmlFor="mcq_option_4" className="w-fit cursor-pointer flex gap-3"><input onChange={handleOptionChange}   className="cursor-pointer option-input " type="radio" name="mcq_option" id="mcq_option_4" value="4"  /><MathJax><h1 className="text-xl font-medium"> (4) <span className="ml-5">{currentQuestion?.options[3]}</span></h1></MathJax></label>
               </div>
             </div>
 
             <div className="flex mt-5 gap-3">
-              <button className="bg-green-600  px-2 py-1 text-lg font-semibold text-white">Save & Next</button>
-              <button className="bg-orange-500  px-2 py-1 text-lg font-semibold text-white">Save & Mark For Review</button>
-              <button className="border border-black  px-2 py-1 text-lg font-semibold text-black">Clear Response</button>
-              <button className="bg-orange-500  px-2 py-1 text-lg font-semibold text-white">Mark For Review & Next</button>
+              <button onClick={saveAndNext}  className="bg-green-600  px-2 py-1 text-lg font-semibold text-white">Save & Next</button>
+              <button onClick={saveAndMarkForReview}  className="bg-orange-500  px-2 py-1 text-lg font-semibold text-white">Save & Mark For Review</button>
+              <button onClick={clearOption}  className="border border-black  px-2 py-1 text-lg font-semibold text-black">Clear Response</button>
+              <button onClick={markForReview}  className="bg-orange-500  px-2 py-1 text-lg font-semibold text-white">Mark For Review & Next</button>
             </div>
             <div className="flex mt-5 p-3 bg-gray-200 justify-between font-semibold">
               <div className="flex gap-2">
@@ -89,7 +195,7 @@ const JeeExam = () => {
             </div>
             <div className='flex gap-1 mt-1 items-center'> <QuestionIcon type={5} number={questionIndexesMap.MForReviewAndA} /> Answered &  Marked for Review </div>
             <div className='overflow-y-scroll h-72 mt-10 p-2  w-full grid grid-cols-5'>
-              {questionIndexes.map((type, i) => (<div className="cursor-pointer" onClick={()=>changeQuestionNumber(i)} id={String(i)} ><QuestionIcon type={type} number={i + 1} /></div>))}
+              {questionIndexes[subject]?.map((type, i) => (<div className="cursor-pointer" onClick={()=>changeQuestionNumber(i)} id={String(i)} ><QuestionIcon type={type} number={i + 1} /></div>))}
             </div>
           </div>
 

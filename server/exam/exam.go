@@ -217,11 +217,6 @@ func GetExam(c *gin.Context) {
 		return
 	}
 
-	if len(results) < 1 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "exam not found!"})
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{"success": true, "exam": results[0]})
 }
 
@@ -632,6 +627,10 @@ func GetRegisteredExams(c *gin.Context) {
 			var results []bson.M
 			if err = cursor.All(context.Background(), &results); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+				return
+			}
+			if len(results) < 1 {
+				c.JSON(http.StatusOK, gin.H{"success": true, "exams": results})
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{"success": true, "exams": results[0]})

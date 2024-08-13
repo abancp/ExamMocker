@@ -9,7 +9,7 @@ function page() {
   const { id } = useParams()
   const [question, setQuestion] = useState({})
   useEffect(() => {
-    axios.get(`${SERVER_URL}/admin/question/${id}`).then(({ data }) => {
+    axios.get(`${SERVER_URL}/admin/question/${id}`,{withCredentials:true}).then(({ data }) => {
       setQuestion(data.question)
       console.log(data.question)
     })
