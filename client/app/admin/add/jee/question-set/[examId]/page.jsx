@@ -166,7 +166,6 @@ function page() {
 
   return (
     <MathJaxContext>
-      { }
       <div className='min-h-screen max-h-fit flex flex-col pb-3 gap-2 pt-[2.7rem] px-3 w-full'>
         <Header />
         <div className='w-full  items-center flex justify-around '>
@@ -223,7 +222,7 @@ function page() {
           {
             questions?.map((question) => (
               <div href={'/admin/question/' + question._id} className='border-[#259ac4] w-full flex justify-between  p-2 border'>
-                <div onClick={() => { setCurrentQuestion(question) }} className="whitespace-nowrap overflow-hidden w-full text-ellipsis"><MathJax>{question.question}</MathJax></div>
+                <div onClick={() => { question.subject === subject &&  setCurrentQuestion(question) }} className="whitespace-nowrap overflow-hidden w-full text-ellipsis"><MathJax>{question.question}</MathJax></div>
                 <div className=' flex items-center'><Link href={'/admin/question/' + question._id} className='  px-1 py-[.10rem] bg-[#35353f58] '>Open</Link></div>
               </div>
             ))
