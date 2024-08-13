@@ -53,8 +53,8 @@ const JeeExam = () => {
         exams = transaction.objectStore('exams')
         let getReq = exams.get(examId)
 	getReq.onsuccess = (e)=>{
-		setCurrentQuestion(e.target.result?.exam?.questions[subject][0])
-		setQuestions(e.target.result?.exam?.questions)
+		setCurrentQuestion(e.target.result?.questions[subject][0])
+		setQuestions(e.target.result?.questions)
 	}
 	setCurrentQuestion(questions[subject][0])
     }
