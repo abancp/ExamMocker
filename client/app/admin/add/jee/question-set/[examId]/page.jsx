@@ -77,6 +77,7 @@ function page() {
     if (!canEdit) {
       return
     }
+    setCanEdit(false)
     addCurrentQuestionToExam()
     setCurrentQuestion(null)
     lastIndexes[subject] = questionNumber
@@ -85,12 +86,14 @@ function page() {
     if (exam[e.target.id][lastIndexes[e.target.id]]) {
       setCurrentQuestion(exam[e.target.id][lastIndexes[e.target.id]])
     }
+    setCanEdit(true)
   }
 
   const changeQuestionNumber = (e) => {
     if (!canEdit) {
       return
     }
+    setCanEdit(false)
     addCurrentQuestionToExam()
     setCurrentQuestion(null)
     lastType[questionNumber + subject] = questionType
@@ -104,12 +107,14 @@ function page() {
     } else {
       setQuestionType("Q")
     }
+    setCanEdit(true)
   }
 
   const addCurrentQuestionToExam = () => {
     if (!canEdit) {
       return
     }
+    setCanEdit(false)
     if (currentQuestion) {
       console.log(subject)
       exam[subject][questionNumber] = currentQuestion
@@ -119,6 +124,7 @@ function page() {
     } else {
       console.log("no question for save")
     }
+    setCanEdit(true)
   }
 
   const save = () => {
