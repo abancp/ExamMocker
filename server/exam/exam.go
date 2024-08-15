@@ -659,6 +659,12 @@ func SubmitExam(c *gin.Context) {
 	}
 	exam := c.Param("exam")
 	id := c.Param("id")
+	_id, err := primitive.ObjectIDFromHex(id)
+          if err != nil {
+                  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                  return
+         }
+
 	db := config.DB
 	switch exam {
 	case "jee":
@@ -669,7 +675,7 @@ func SubmitExam(c *gin.Context) {
 				return
 			}
 			var exam ExamBody
-			err := db.Collection("exams").FindOne(context.Background(), bson.M{"_id": id}).Decode(&exam)
+			err := db.Collection("exams").FindOne(context.Background(), bson.M{"_id": _id}).Decode(&exam)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
 					c.JSON(http.StatusNotFound, gin.H{"error": "exam not found"})
@@ -677,7 +683,7 @@ func SubmitExam(c *gin.Context) {
 				}
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 				return
-			}
+		}
 			layout := "2006-01-02T15:04"
 			parsedTime, err := time.Parse(layout, exam.Date)
 			examTime := parsedTime.UnixNano() / int64(time.Millisecond)

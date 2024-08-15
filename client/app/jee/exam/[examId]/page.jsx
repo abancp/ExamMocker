@@ -72,13 +72,17 @@ const JeeExam = () => {
       const answersStore = transaction.objectStore('exams')
       let getAnswersReq = answersStore.get("response-" + examId)
       getAnswersReq.onsuccess = (e) => {
+	if(e.target.result?.answers){
         setAnswers(e.target.result?.answers)
         setOption(e.target.result?.answers[subject[0] + "-" + 0])
+	}
       }
       let getQuestionIndexesReq = answersStore.get("state-" + examId)
       getQuestionIndexesReq.onsuccess = (e) => {
         console.log(e.target.result)
-        setQuestionIndexes(e.target.result?.questionIndexes)
+	if (e.target.result?.questionIndexes){
+	   setQuestionIndexes(e.target.result?.questionIndexes)
+	}
       }
     }
 
@@ -205,11 +209,11 @@ const JeeExam = () => {
     })
   }
 
-  const submit = () => {
-    const hash = hashData(answers)
+  const submit =async () => {
+    const hash = await  hashData(answers)
     window.localStorage.setItem('k-' + examId, hash)
-
-    axios.post(SERVER_URL + "/exam/jee"+examId, { response: answers, state: questionIndexes, key: hash }, { withCredentials: true }).then(({ data }) => {
+    console.log(hash)
+    axios.post(SERVER_URL + "/exam/jee/"+examId, { response: answers, state: questionIndexes, key: hash }, { withCredentials: true }).then(({ data }) => {
       if (data.success) {
         toast.success(data.message)
         window.localStorage.removeItem('k-' + examId)
