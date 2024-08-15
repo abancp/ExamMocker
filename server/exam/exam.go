@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"server/config"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,6 +26,12 @@ type ExamBody struct {
 
 type RegisterExamBody struct {
 	Email string `json:"email"`
+}
+
+type SubmitExamBody struct {
+	Response map[string]interface{} `json:"response"`
+	State    map[string]interface{} `json:"state"`
+	Key      string                 `json:"key"`
 }
 
 func AddExam(c *gin.Context) {
@@ -642,4 +649,63 @@ func GetRegisteredExams(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func SubmitExam(c *gin.Context) {
+	userEmail, exist := c.Get("userEmail")
+	if !exist {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+		return
+	}
+	exam := c.Param("exam")
+	id := c.Param("id")
+	db := config.DB
+	switch exam {
+	case "jee":
+		{
+			var body SubmitExamBody
+			if err := c.ShouldBindJSON(&body); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			var exam ExamBody
+			err := db.Collection("exams").FindOne(context.Background(), bson.M{"_id": id}).Decode(&exam)
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					c.JSON(http.StatusNotFound, gin.H{"error": "exam not found"})
+					return
+				}
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+				return
+			}
+			layout := "2006-01-02T15:04"
+			parsedTime, err := time.Parse(layout, exam.Date)
+			examTime := parsedTime.UnixNano() / int64(time.Millisecond)
+			currentTime := time.Now()
+			submittedTime := currentTime.UnixNano() / int64(time.Millisecond)
+			if err != nil {
+				fmt.Println("Error parsing time:", err)
+				return
+			}
+
+			_, err = db.Collection("jee-users").UpdateOne(context.Background(), bson.M{"exam": id, "email": userEmail}, bson.M{"$set": bson.M{"response": body.Response, "state": body.State, "submittedTime": submittedTime}})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+				return
+			}
+			if submittedTime < (examTime + 86400000) {
+				c.JSON(http.StatusOK, gin.H{"success": true, "message": "Submitted successfully!,But time over . we will verify that"})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"success": true, "message": "Submitted successfully!"})
+			return
+		}
+	default:
+		{
+			c.JSON(http.StatusNotFound, gin.H{"error": "invalid exam"})
+			return
+		}
+
+	}
+
 }

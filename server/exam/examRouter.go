@@ -13,6 +13,7 @@ func Exam(r *gin.Engine) {
 	userProtected.GET("/exam/:id",GetStudentExam)
 	userProtected.GET("/exam-minimal/:id",GetMinimalExam)
 	userProtected.GET("/exam-registered/:exam",GetRegisteredExams)	
+	userProtected.POST("/exam/:exam/:id",SubmitExam)	
 	userProtected.POST("/register-exam/:exam/:id",Register)
 
 	
