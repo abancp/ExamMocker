@@ -34,7 +34,7 @@ function Login() {
                 toast.error(data.error || "something went wrong!")
             }
         }).catch((data) => {
-            if (data.response.status == 401) {
+            if (data?.response?.status == 401) {
                 setErrMsg(data.response.data.error)
             } else {
                 toast.error(data.response.data.error || "something went wrong!")
