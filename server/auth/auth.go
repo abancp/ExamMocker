@@ -32,6 +32,7 @@ type Token struct {
 type Claims struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Admin    bool `json:"admin"`
 	jwt.StandardClaims
 }
 
@@ -70,6 +71,7 @@ func Login(c *gin.Context) {
 	claims["authorized"] = true
 	claims["username"] = user.Name
 	claims["email"] = user.Email
+	claims["admin"] = user.Admin
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
@@ -142,6 +144,7 @@ func Signup(c *gin.Context) {
 	claims["authorized"] = true
 	claims["username"] = user.Name
 	claims["email"] = user.Email
+	claims["admin"] = user.Admin
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
@@ -179,7 +182,6 @@ func ValidateToken(c *gin.Context) {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
 	if err != nil || !token.Valid {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return

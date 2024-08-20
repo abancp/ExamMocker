@@ -58,6 +58,10 @@ func AddExam(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "id": result.InsertedID, "message": "Exam added , questions can add separately"})
 }
 
+//func DeleteExam(c *gin.Context){
+	
+//}
+
 func GetExam(c *gin.Context) {
 	db := config.DB
 	givenId := c.Param("id")
