@@ -8,6 +8,7 @@ import SERVER_URL from "../../../../config/serverUrl";
 import axios from 'axios'
 import useHashString from '../../../../hooks/useHashString'
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const JeeExam = () => {
 
@@ -41,6 +42,7 @@ const JeeExam = () => {
   const [lastIndexes, setLastIndexes] = useState({ "mathematics": 0, "physics": 0, "chemistry": 0 })
   const [loading, setLoading] = useState(true)
   const hashData = useHashString()
+  const router = useRouter()
 
   useEffect(() => {
     let exams;
@@ -72,17 +74,17 @@ const JeeExam = () => {
       const answersStore = transaction.objectStore('exams')
       let getAnswersReq = answersStore.get("response-" + examId)
       getAnswersReq.onsuccess = (e) => {
-	if(e.target.result?.answers){
-        setAnswers(e.target.result?.answers)
-        setOption(e.target.result?.answers[subject[0] + "-" + 0])
-	}
+        if (e.target.result?.answers) {
+          setAnswers(e.target.result?.answers)
+          setOption(e.target.result?.answers[subject[0] + "-" + 0])
+        }
       }
       let getQuestionIndexesReq = answersStore.get("state-" + examId)
       getQuestionIndexesReq.onsuccess = (e) => {
         console.log(e.target.result)
-	if (e.target.result?.questionIndexes){
-	   setQuestionIndexes(e.target.result?.questionIndexes)
-	}
+        if (e.target.result?.questionIndexes) {
+          setQuestionIndexes(e.target.result?.questionIndexes)
+        }
       }
     }
 
@@ -173,7 +175,7 @@ const JeeExam = () => {
   }
 
   const saveAndJump = (jumpTo) => {
-    if (jumpTo > 29) {
+    if (jumpTo > 29 || jumpTo < 0) {
       return
     }
     if (selectedOption) {
@@ -209,23 +211,28 @@ const JeeExam = () => {
     })
   }
 
-  const submit =async () => {
-    const hash = await  hashData(answers)
+  const submit = async () => {
+    const hash = await hashData(answers)
     window.localStorage.setItem('k-' + examId, hash)
-    console.log(hash)
-    axios.post(SERVER_URL + "/exam/jee/"+examId, { response: answers, state: questionIndexes, key: hash }, { withCredentials: true }).then(({ data }) => {
+    axios.post(SERVER_URL + "/exam/jee/" + examId, { response: answers, state: questionIndexes, key: hash }, { withCredentials: true }).then(({ data }) => {
       if (data.success) {
         toast.success(data.message)
         window.localStorage.removeItem('k-' + examId)
-        let transaction = answersDB.transaction('exams', 'readwrite')
-        let answersStore = transaction.objectStore('exams')
-        answersStore?.delete("response-" + examId)
-        answersStore?.delete("state-" + examId)
+        if (answersDB) {
+          let transaction = answersDB.transaction('exams', 'readwrite')
+          let answersStore = transaction.objectStore('exams')
+          const deleteResponseReq = answersStore?.delete("response-" + examId)
+          const deleteStateReq = answersStore?.delete("state-" + examId)
+          deleteResponseReq.onsuccess = ()=>{console.log("response deleted");}
+          deleteStateReq.onsuccess = ()=>{console.log("state deleted");}
+        }
       }
     }).catch((data) => {
       let errMsg = data.response.data.error || "something went wrong!"
-      toast.error(errMsg+" Don't worry . you can submit in home page within 23 hrs")
+      toast.error(errMsg + " Don't worry . you can submit in home page within 23 hrs")
     })
+    router.push("/jee/review/"+examId);
+    
   }
 
   const [time, setTime] = useState({ seconds: 0, minutes: 0, hours: 3 })
@@ -300,7 +307,7 @@ const JeeExam = () => {
                 <button onClick={() => { saveAndJump(currentQuestionIndex - 1) }} className="px-2 py-1 border border-black text-black">BACK</button>
                 <button onClick={() => { saveAndJump(currentQuestionIndex + 1) }} className="px-2 py-1 border border-black text-black">NEXT</button>
               </div>
-              <button onClick={()=>{confirm("Are you sure to submit exam") && submit()}} className="px-2 py-1 bg-green-600 text-white font-semibold">SUBMIT</button>
+              <button onClick={() => { confirm("Are you sure to submit exam") && submit() }} className="px-2 py-1 bg-green-600 text-white font-semibold">SUBMIT</button>
             </div>
           </div>
 
@@ -316,7 +323,6 @@ const JeeExam = () => {
               {questionIndexes[subject]?.map((type, i) => (<div className="cursor-pointer" onClick={() => saveAndJump(i)} id={String(i)} ><QuestionIcon type={type} number={i + 1} /></div>))}
             </div>
           </div>
-
         </div>
       </div>
     </MathJaxContext>
