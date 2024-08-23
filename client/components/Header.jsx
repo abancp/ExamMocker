@@ -53,7 +53,12 @@ function Header() {
             />
           </svg>
         </div>
-
+          <Link
+            href="/results"
+            className="flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]"
+          >
+            <h1>Results</h1>
+          </Link>
         {admin && (
           <Link
             href="/admin"
@@ -63,6 +68,11 @@ function Header() {
           </Link>
         )}
 
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        
         <div className="flex rounded-full border-x border-[#259ac4]">
           {name ? null : (
             <Link
@@ -82,7 +92,7 @@ function Header() {
           )}
           {name && (
             <Link
-              href={"/login"}
+              href={"/profile"}
               className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full "
             >
               {name}
