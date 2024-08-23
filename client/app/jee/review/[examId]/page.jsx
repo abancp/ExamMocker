@@ -1,11 +1,12 @@
 "use client"
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 
 function page() {
+  const {examId} = useParams()
   const router = useRouter()
   const handleClick = ()=>{
-    router.push("/")
+    router.push("/jee/result/"+examId)
   }
 
   return (
