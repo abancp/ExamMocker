@@ -5,6 +5,7 @@ import axios from "axios";
 import SERVER_URL from "../../../../config/serverUrl";
 import { useParams } from "next/navigation";
 import { Doughnut, Bar } from "react-chartjs-2";
+import Confetti from "react-confetti";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -27,6 +28,8 @@ ChartJS.register(
 
 function Page() {
   const { examId } = useParams();
+  const [confettiParticle, setCofettiParticle] = useState(400);
+  const [showConfetti, setShowConfetti] = useState(true);
   const [marks, setMarks] = useState({
     mathematics: 0,
     physics: 0,
@@ -38,6 +41,21 @@ function Page() {
     chemistry: { attended: 0, notAttended: 0, right: 0, wrong: 0 },
   });
 
+  useEffect(() => {
+    if (showConfetti) {
+      const particleReducer = setInterval(() => {
+        setCofettiParticle((prev) => prev - 20);
+      }, 300);
+      const displayTimer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 10000);
+      return () => {
+        clearTimeout(displayTimer);
+        clearInterval(particleReducer);
+      };
+    }
+  }, [showConfetti]);
+
   const PieChartData = (subject) => {
     if (!analysis.mathematics) {
       return [0, 0, 0];
@@ -45,14 +63,14 @@ function Page() {
     if (subject === "total") {
       return [
         analysis.mathematics.right +
-          analysis.physics.right +
-          analysis.chemistry.right,
+        analysis.physics.right +
+        analysis.chemistry.right,
         analysis.mathematics.wrong +
-          analysis.physics.wrong +
-          analysis.chemistry.wrong,
+        analysis.physics.wrong +
+        analysis.chemistry.wrong,
         analysis.mathematics.notAttended +
-          analysis.physics.notAttended +
-          analysis.chemistry.notAttended,
+        analysis.physics.notAttended +
+        analysis.chemistry.notAttended,
       ];
     }
     return [
@@ -60,6 +78,22 @@ function Page() {
       analysis[subject]?.wrong,
       analysis[subject]?.notAttended,
     ];
+  };
+  const BarChartData = (purpose) => {
+    if (!marks.mathematics) {
+      return [0, 0, 0];
+    }
+    if (purpose == "mark") {
+      return [marks.mathematics, marks.physics, marks.chemistry];
+    }
+    if (purpose == "percentile") {
+      return [
+        analysis.mathematics.attended,
+        analysis.physics.attended,
+        analysis.chemistry.attended,
+      ];
+    }
+    return [0, 0, 0];
   };
 
   const PieConfigData = (subject) => ({
@@ -77,12 +111,12 @@ function Page() {
       },
     ],
   });
-  const BarConfigData = {
+  const BarConfigData = (purpose) => ({
     labels: ["mathematics", "physics", "chemistry"],
     datasets: [
       {
-        label:"Graph - Subject Wise Mark ",
-        data: [marks.mathematics, marks.physics, marks.chemistry],
+        label: "Graph - Subject Wise Mark ",
+        data: BarChartData(purpose),
         backgroundColor: [
           "rgba(255, 99, 132)",
           "rgba(54, 162, 235)",
@@ -95,7 +129,8 @@ function Page() {
         ],
       },
     ],
-  };
+  });
+
   const options = {
     plugins: {
       legend: {
@@ -104,7 +139,6 @@ function Page() {
     },
   };
 
-  
   useEffect(() => {
     axios
       .get(SERVER_URL + "/result/" + examId, { withCredentials: true })
@@ -119,8 +153,13 @@ function Page() {
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-10 p-10 pt-20">
+      
+      {showConfetti && (
+        <Confetti numberOfPieces={confettiParticle} width={window.innerWidth} height={window.innerHeight} />
+      )}
       <Header />
       <div>
+        {showConfetti ? "show" : "not show"}
         <h1 className="text-center font-semibold text-2xl">Overview</h1>
         <div className="flex gap-2 h-[17rem] items-center">
           <Doughnut data={PieConfigData("total")} options={options} />
@@ -276,8 +315,9 @@ function Page() {
           <Doughnut data={PieConfigData("chemistry")} options={options} />
         </div>
       </div>
-      <div className="h-[20rem]">
-        <Bar data={BarConfigData} />
+      <div className="h-[17rem] flex gap-20 justify-center w-full">
+        <Bar data={BarConfigData("mark")} />
+        <Bar data={BarConfigData("percentile")} />
       </div>
     </div>
   );
