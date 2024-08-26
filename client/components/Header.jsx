@@ -34,7 +34,7 @@ function Header() {
             </svg>
           </Link>
         </div>
-        <div className="flex gap-2 text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]">
+        <div className=" gap-2 hidden md:flex text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]">
           <h1>Exams </h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
