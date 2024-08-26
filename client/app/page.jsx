@@ -20,7 +20,7 @@ function Page() {
         <div className="md:flex block justify-between gap-[5rem] items-center">
           <div className="w-full md:w-1/2 ">
             <div className="shadow-[rgb(10,101,198)_250px_-20px_950px_43px]"></div>
-            <h1 className="text-6xl text-white mt-34 font-semibold text-center">
+            <h1 className="text-4xl md:text-5xl text-white mt-34 font-semibold text-center">
               ExamMocker
             </h1>
             <p className="mt-4 text-[#aeaeae] text-center font-light">
