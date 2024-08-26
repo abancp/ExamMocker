@@ -29,7 +29,7 @@ function Page() {
             </p>
             {/* <p className=" font-extralight text-wrap">You can register our mock exams and attend at your home . our exams are Computer Based Tests. For perfect exam feeling you can take a desktop or laptop for attend the exam otherwise your phone is ok for exams</p> */}
           </div>
-          <div className=" mt-20 md:mt-0 ">
+          <div className=" mt-20 md:mt-0 p-8">
             <img src="exam.png" className="rounded-[2rem] w-96" alt="" />
           </div>
         </div>
@@ -80,7 +80,7 @@ function Page() {
       </section>
       <section
         ref={questionRef}
-        className="border-[3px]  border-[#259ac4] mt-48 md:mt-20 flex flex-col justify-center items-center p-5 px-10 text-xl rounded-[2rem]  w-full "
+        className="border-[3px]  border-[#259ac4] mt-48 md:mt-20 flex flex-col justify-center items-center p-5 md:px-10 text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-5xl text-center">Questions</h1>
         <div
@@ -103,7 +103,7 @@ function Page() {
       </section>
       <section
         ref={examExperienceRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 px-10 text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5  md:px-10 text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-5xl text-center">Exam Experience</h1>
         <div
@@ -129,7 +129,7 @@ function Page() {
       </section>
       <section
         ref={systemRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 px-10 text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 md:px-10 text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-5xl text-center">System</h1>
         <div
