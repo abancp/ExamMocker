@@ -34,30 +34,30 @@ type AnswerKey struct {
 }
 
 type QuestionAnalysis struct {
-	Mathematics struct {
-		Attended    int `json:"attended"`
-		Right       int `json:"right"`
-		Wrong       int `json:"wrong"`
+	Mathematics struct{
+		Attended int `json:"attended"`
+		Right int `json:"right"`
+		Wrong int `json:"wrong"`
 		NotAttended int `json:"notAttended"`
 	} `json:"mathematics"`
-	Physics struct {
-		Attended    int `json:"attended"`
-		Right       int `json:"right"`
-		Wrong       int `json:"wrong"`
+	Physics     struct{
+		Attended int `json:"attended"`
+		Right int `json:"right"`
+		Wrong int `json:"wrong"`
 		NotAttended int `json:"notAttended"`
 	} `json:"physics"`
-	Chemistry struct {
-		Attended    int `json:"attended"`
-		Right       int `json:"right"`
-		Wrong       int `json:"wrong"`
+	Chemistry   struct{
+		Attended int `json:"attended"`
+		Right int `json:"right"`
+		Wrong int `json:"wrong"`
 		NotAttended int `json:"notAttended"`
 	} `json:"chemistry"`
 }
 
-type Marks struct {
+type Marks struct{
 	Mathmatics int `json:"mathematics"`
-	Physics    int `json:"physics"`
-	Chemistry  int `json:"chemistry"`
+	Physics int `json:"physics"`
+	Chemistry int `json:"chemistry"`
 }
 
 func GetResult(c *gin.Context) {
@@ -279,7 +279,7 @@ func GetResult(c *gin.Context) {
 
 	var marks Marks
 	var resultAnalysis QuestionAnalysis
-
+	
 	for question, response := range response.Response {
 		parts := strings.Split(question, "-")
 		questionIndex, err := strconv.Atoi(parts[1])
@@ -323,10 +323,11 @@ func GetResult(c *gin.Context) {
 			}
 		}
 	}
+	
 
 	resultAnalysis.Mathematics.NotAttended = len(results[0].Questions.Mathematics) - resultAnalysis.Mathematics.Attended
 	resultAnalysis.Physics.NotAttended = len(results[0].Questions.Physics) - resultAnalysis.Physics.Attended
 	resultAnalysis.Chemistry.NotAttended = len(results[0].Questions.Chemistry) - resultAnalysis.Chemistry.Attended
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "marks": marks, "analysis": resultAnalysis})
+	
+	c.JSON(http.StatusOK, gin.H{"success":true,"marks": marks,"analysis":resultAnalysis})
 }

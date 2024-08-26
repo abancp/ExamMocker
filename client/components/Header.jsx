@@ -1,15 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Cookies from "js-cookie";
 import SERVER_URL from "../config/serverUrl";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 function Header() {
   const [name, setName] = useState(null);
   const [admin, setAdmin] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     axios
@@ -22,7 +19,7 @@ function Header() {
 
   return (
     <div className=" fixed top-5 left-0 flex justify-center items-center w-full">
-      <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[90%] h-11 border border-[#259ac4]">
+      <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-[#259ac4]">
         <div className="rounded-full flex justify-center items-center cursor-pointer border-r border-[#259ac4] w-11 h-full">
           <Link href={"/"}>
             <svg

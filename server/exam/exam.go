@@ -59,7 +59,7 @@ func AddExam(c *gin.Context) {
 }
 
 //func DeleteExam(c *gin.Context){
-	
+
 //}
 
 func GetExam(c *gin.Context) {
@@ -490,6 +490,7 @@ func GetReadyExams(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database Error"})
 		return
 	}
+
 	defer cursor.Close(context.Background())
 
 	for cursor.Next(context.Background()) {
@@ -664,10 +665,10 @@ func SubmitExam(c *gin.Context) {
 	exam := c.Param("exam")
 	id := c.Param("id")
 	_id, err := primitive.ObjectIDFromHex(id)
-          if err != nil {
-                  c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-                  return
-         }
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	db := config.DB
 	switch exam {
@@ -687,7 +688,7 @@ func SubmitExam(c *gin.Context) {
 				}
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 				return
-		}
+			}
 			layout := "2006-01-02T15:04"
 			parsedTime, err := time.Parse(layout, exam.Date)
 			examTime := parsedTime.UnixNano() / int64(time.Millisecond)
@@ -720,3 +721,46 @@ func SubmitExam(c *gin.Context) {
 
 }
 
+func GetAttendedExams(c *gin.Context) {
+	email, exist := c.Get("userEmail")
+	if !exist {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+		return
+	}
+	exam := c.Param("exam")
+	db := config.DB
+	var exams []bson.M
+	switch exam {
+	case "jee":
+		{
+			cursor, err := db.Collection("jee-users").Find(context.Background(), bson.M{"email": email, "response": bson.M{"$exists": true}})
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					c.JSON(http.StatusOK, gin.H{"success": true, "exams": exams})
+				}
+			}
+
+			defer cursor.Close(context.Background())
+
+			for cursor.Next(context.Background()) {
+				var exam bson.M
+				err := cursor.Decode(&exam)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+				exams = append(exams, exam)
+			}
+			if err := cursor.Err(); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"success": true, "exams": exams})
+		}
+	default:
+		{
+			c.JSON(http.StatusNotFound, gin.H{"error": "exam not found!"})
+			return
+		}
+	}
+}

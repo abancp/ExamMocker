@@ -28,7 +28,7 @@ ChartJS.register(
 
 function Page() {
   const { examId } = useParams();
-  const [confettiParticle, setCofettiParticle] = useState(400);
+  const [confettiParticle, setCofettiParticle] = useState(1000);
   const [showConfetti, setShowConfetti] = useState(true);
   const [marks, setMarks] = useState({
     mathematics: 0,
@@ -44,7 +44,7 @@ function Page() {
   useEffect(() => {
     if (showConfetti) {
       const particleReducer = setInterval(() => {
-        setCofettiParticle((prev) => prev - 20);
+        setCofettiParticle((prev) => prev - 40);
       }, 300);
       const displayTimer = setTimeout(() => {
         setShowConfetti(false);
@@ -111,11 +111,12 @@ function Page() {
       },
     ],
   });
+
   const BarConfigData = (purpose) => ({
     labels: ["mathematics", "physics", "chemistry"],
     datasets: [
       {
-        label: "Graph - Subject Wise Mark ",
+        label: "Graph - Subject Wise "+purpose,
         data: BarChartData(purpose),
         backgroundColor: [
           "rgba(255, 99, 132)",
@@ -153,13 +154,19 @@ function Page() {
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-10 p-10 pt-20">
-      
-      {showConfetti && (
-        <Confetti numberOfPieces={confettiParticle} width={window.innerWidth} height={window.innerHeight} />
-      )}
+      {showConfetti && 
+        <div className="w-full h-screen fixed top-0 left-0 z-100 flex justify-center items-center">
+          <div className="rounded-md border text-[#259ac4] border-[#259ac4] w-[40rem] h-[25rem] backdrop-blur-lg flex flex-col justify-center items-center z-1000 font-bold text-4xl text-center"> Rank : 234 <br/>  Percentile : 99.32</div>
+          <Confetti
+            gravity={0.25}
+            numberOfPieces={confettiParticle}
+            width={window.innerWidth}
+            height={window.innerHeight}
+          />
+        </div>
+      }
       <Header />
       <div>
-        {showConfetti ? "show" : "not show"}
         <h1 className="text-center font-semibold text-2xl">Overview</h1>
         <div className="flex gap-2 h-[17rem] items-center">
           <Doughnut data={PieConfigData("total")} options={options} />
@@ -298,28 +305,29 @@ function Page() {
                     analysis.chemistry.notAttended}
                 </th>
                 <th className="p-2 text-center border border-blue-400">90</th>
-                <th className="p-2 text-center border border-blue-400">
+                <th className="p-2 text-center border border-blue-400 text-[#259ac4] font-semibold">
                   99.3452
                 </th>
-                <th className="p-2 text-center border border-blue-400">229</th>
+                <th className="p-2 text-center border border-blue-400 font-semibold text-[#259ac4]">229</th>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
       <div className="text-center flex flex-col gap-10 ">
-        <h1 className="font-semibold text-xl">Subject Wise Analysis</h1>
+        <h1 className="font-semibold text-3xl">Subject Wise Analysis</h1>
         <div className="flex gap-4 justify-around h-72">
           <Doughnut data={PieConfigData("mathematics")} options={options} />
           <Doughnut data={PieConfigData("physics")} options={options} />
           <Doughnut data={PieConfigData("chemistry")} options={options} />
         </div>
       </div>
+      <h1 className="text-3xl font-semibold">Total Analysis</h1>
       <div className="h-[17rem] flex gap-20 justify-center w-full">
         <Bar data={BarConfigData("mark")} />
         <Bar data={BarConfigData("percentile")} />
       </div>
-    </div>
+    </div >
   );
 }
 

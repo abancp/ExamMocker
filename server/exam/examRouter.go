@@ -12,11 +12,12 @@ func Exam(r *gin.Engine) {
 	userProtected.GET("/ready-exams",GetReadyExams)
 	userProtected.GET("/exam/:id",GetStudentExam)
 	userProtected.GET("/exam-minimal/:id",GetMinimalExam)
-	userProtected.GET("/exam-registered/:exam",GetRegisteredExams)	
+	userProtected.GET("/exam-registered/:exam",GetRegisteredExams)
+	//TODO:exam-registerd to exam[s] in client and server
 	userProtected.POST("/exam/:exam/:id",SubmitExam)	
 	userProtected.POST("/register-exam/:exam/:id",Register)
 	userProtected.GET("/result/:id",GetResult)
-
+	userProtected.GET("/exams-attented/:exam",GetAttendedExams)
 	
 	adminProtected := r.Group("/admin",auth.AuthMiddleware("admin"))
 	adminProtected.GET("/questions",GetQuestions)
