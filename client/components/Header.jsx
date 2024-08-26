@@ -59,7 +59,7 @@ function Header() {
         {admin && (
           <Link
             href="/admin"
-            className="flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]"
+            className="hidden md:flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]"
           >
             <h1>Admin</h1>
           </Link>

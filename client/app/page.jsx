@@ -14,7 +14,7 @@ function Page() {
   });
   const [systemRef, systemIsVisible] = useOnScreen({ threshold: 0.5 });
   return (
-    <div className="p-20">
+    <div className="p-4">
       <Header />
       <main className="w-full h-screen mt-20 md:mt-0 flex justify-center items-center p-20">
         <div className="md:flex block justify-between gap-[5rem] items-center">
@@ -80,9 +80,9 @@ function Page() {
       </section>
       <section
         ref={questionRef}
-        className="border-[3px]  border-[#259ac4] mt-48 md:mt-20 flex flex-col justify-center items-center p-5 md:px-10 text-xl rounded-[2rem]  w-full "
+        className="border-[3px]  border-[#259ac4] mt-48 md:mt-20 flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
-        <h1 className="text-5xl text-center">Questions</h1>
+        <h1 className="text-3xl md:text-5xl text-center">Questions</h1>
         <div
           className={`${questionIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
@@ -103,9 +103,9 @@ function Page() {
       </section>
       <section
         ref={examExperienceRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5  md:px-10 text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5  md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
-        <h1 className="text-5xl text-center">Exam Experience</h1>
+        <h1 className="text-3xl md:text-5xl text-center">Exam Experience</h1>
         <div
           className={`${examExperienceIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
@@ -129,9 +129,9 @@ function Page() {
       </section>
       <section
         ref={systemRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 md:px-10 text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
-        <h1 className="text-5xl text-center">System</h1>
+        <h1 className="text-3xl md:text-5xl text-center">System</h1>
         <div
           className={`${systemIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
