@@ -6,7 +6,7 @@ import ResultList from '../../components/Exam/ResultList'
 function Page() {
   
   return (
-    <div className="px-10 pt-24">
+    <div className="px-4 md:px-10 pt-24">
       <Header/>
       <ResultList/>
     </div>

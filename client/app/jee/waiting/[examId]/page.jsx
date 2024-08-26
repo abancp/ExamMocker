@@ -174,14 +174,14 @@ function page() {
         <h1 className="font-medium text-6xl text-[#259ac4]">Exam Started!</h1>
       ) : (
         !isNaN(time.days) && (
-          <h1 className="font-medium text-6xl text-[#259ac4]">
+          <h1 className="md:font-medium text-center font-light text-2xl md:text-6xl text-[#259ac4]">
             {time.days} Days {time.hours} Hours {time.minutes} Minutes{" "}
             {time.seconds} Seconds
           </h1>
         )
       )}
       {startExam || (
-        <p className="text-3xl text-[#259ac4] ">left for your exam </p>
+        <p className="text-xl md:text-3xl text-[#259ac4] ">left for your exam </p>
       )}
       {differenceTimeState < 900000 && (
         <button

@@ -5,15 +5,13 @@ import SERVER_URL from "../../config/serverUrl";
 import Link from "next/link";
 
 function ExamList() {
-
   const [exams, setExams] = useState([]);
-  const [selectedExamId, setSelectedExamId] = useState(null);
 
   useEffect(() => {
     axios
       .get(SERVER_URL + "/exams-attented/jee", { withCredentials: true })
       .then(({ data }) => {
-        console.log(data)
+        console.log(data);
         if (data.success) {
           setExams(data.exams);
         }
@@ -28,7 +26,7 @@ function ExamList() {
         <div className="w-1/3 flex justify-center items-center">
           <h1 className="text-lg">Submitted time</h1>
         </div>
-        <div className="w-1/3 flex justify-center items-center"> 
+        <div className="w-1/3 flex justify-center items-center">
           <h1 className="text-lg">Exam</h1>
         </div>
         <div className="w-1/3 flex justify-center items-center">
@@ -37,7 +35,7 @@ function ExamList() {
       </div>
       {exams?.map((exam, i) => (
         <Link
-          href={"jee/result/"+exam.exam}
+          href={"jee/result/" + exam.exam}
           className={`w-full flex cursor-pointer border-[#259ac4] group  hover:border-[#5cbc20] duration-300 justify-between  items-center rounded-lg border  h-12`}
         >
           <div
@@ -46,7 +44,9 @@ function ExamList() {
             {i + 1}
           </div>
           <div className="w-1/3 flex justify-center font-semibold text-center items-center">
-            <h1 className="text-lg">{String(Date(exam.submittedTime))?.split("(")[0]}</h1>
+            <h1 className="text-md font-light md:font-normal md:text-lg">
+              {String(Date(exam.submittedTime))?.split("(")[0]}
+            </h1>
           </div>
           <div className="w-1/3 flex justify-center font-semibold items-center">
             <h1 className="text-lg">JEE Mock Test</h1>

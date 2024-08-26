@@ -63,17 +63,17 @@ function ExamList() {
           >
             {i + 1}
           </div>
-          <div className="w-1/4 flex justify-center font-semibold items-center">
-            <h1 className="text-lg">{exam.date?.replace("T", "  ")}</h1>
+          <div className="w-1/4 flex justify-center md:font-semibold items-center">
+            <h1 className="md:text-lg text-center">{exam.date?.replace("T", "  ")}</h1>
           </div>
-          <div className="w-1/4 flex justify-center font-semibold items-center">
-            <h1 className="text-lg">{exam.totalQuestions}</h1>
+          <div className="w-1/4 flex justify-center md:font-semibold items-center">
+            <h1 className="md:text-lg">{exam.totalQuestions}</h1>
           </div>
-          <div className="w-1/4 flex justify-center font-semibold items-center">
-            <h1 className="text-lg">{exam.exam}</h1>
+          <div className="w-1/4 flex justify-center md:font-semibold items-center">
+            <h1 className="md:text-lg">{exam.exam}</h1>
           </div>
-          <div className="w-1/4 flex justify-center font-semibold items-center">
-            <h1 className="text-lg">
+          <div className="w-1/4 flex justify-center md:font-semibold items-center">
+            <h1 className="md:text-lg text-center">
               upcoming{registeredExams?.includes(exam._id) && " (registered)"}
             </h1>
           </div>

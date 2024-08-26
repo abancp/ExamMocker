@@ -26,7 +26,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://exam-mocker.vercel.app", "http://localhost:3000"},
+		AllowOrigins:     []string{"https://exam-mocker.vercel.app", "http://localhost:3000","https://31ff-2409-4073-201f-abdd-26ac-3c87-9add-efb0.ngrok-free.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
