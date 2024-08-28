@@ -10,10 +10,10 @@ function page() {
   }
 
   return (
-    <div className="w-full h-screen bg-[#ffffff] flex justify-center items-center">
-      <div className="rounded-md bg-gray-300 w-[50rem] p-10 h-[15rem] gap-2 flex flex-col justify-center items-center">
+    <div className="w-full h-screen bg-[#ffffff] p-5 flex justify-center items-center">
+      <div className="rounded-md bg-gray-300 w-[50rem] p-10 h-fit gap-8 flex flex-col justify-center items-center">
         <h1 className="text-2xl font-semibold text-blue-700">ExamMocker Mock Test</h1>
-        <table className="text-lg w-full text-black">
+        <table className="text-lg border-separate space-y-3 w-full text-black">
           <tr><td>No of questions attended </td> <td>76</td> </tr>
           <tr><td>No fo questions attended and Mark For Review </td><td>3</td></tr>
           <tr><td>No of Questions not attended </td> <td>10</td> </tr>
