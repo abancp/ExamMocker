@@ -327,11 +327,11 @@ const JeeExam = () => {
         <div className=" text-blue-700 font-bold justify-between px-3 pb-1 items-center flex  h-16">
           <h1 className="text-xl md:text-3xl">ExamMocker</h1>
           <div>
-            <h1 className=" text-sm md:text-lg">
+            <h1 className="hidden sm:block text-sm md:text-lg">
               Candidate Name : Aban Muhammed C P
             </h1>
             <h4 className="flex text-sm md:text-lg  items-center">
-              Remaining Time :
+              <span className="hidden sm:block">Remaining Time :</span>
               <div className="text-white justify-center  bg-blue-600 ml-1 w-24  font-[400] text-lg flex items-center h-[18px] px-2 rounded-full ">
                 {String(time.hours).length == 1 ? "0" + time.hours : time.hours}
                 :
@@ -547,7 +547,7 @@ const JeeExam = () => {
             </div>
           </div>
 
-          <div className={`md:w-[30%] right-0 top-0  h-full fixed md:static bg-white p-5 md:block md:h-[8rem] pt-5 ${showMenu?"block":"hidden"} `}>
+          <div className={`md:w-[30%] right-0 top-0 overflow-y-scroll  h-full fixed md:static bg-white p-5 md:block md:h-[8rem] pt-5 ${showMenu?"block":"hidden"} `}>
             <div className="w-full justify-end flex md:hidden ">
               <svg
                 onClick={toggleMenu}
