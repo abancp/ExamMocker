@@ -704,7 +704,7 @@ func SubmitExam(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
 				return
 			}
-			if submittedTime < (examTime + 86400000) {
+			if submittedTime > (examTime + 86400000) {
 				c.JSON(http.StatusOK, gin.H{"success": true, "message": "Submitted successfully!,But time over . we will verify that"})
 				return
 			}
@@ -763,4 +763,24 @@ func GetAttendedExams(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func DeleteExam(c *gin.Context){
+	id := c.Param("id")
+	_id,err := primitive.ObjectIDFromHex(id)
+	if err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"error":"something went wrong!"})
+		return
+	}
+	db := config.DB
+	_,err = db.Collection("exams").DeleteOne(context.Background(),bson.M{"_id":_id})
+	if err != nil{
+		if err == mongo.ErrNoDocuments{
+			c.JSON(http.StatusNotFound,gin.H{"error":"exam not found!"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError,gin.H{"error":"something went wrong!"})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"success":true,"message":"exam deleted successfully!"})
 }

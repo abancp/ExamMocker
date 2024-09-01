@@ -24,7 +24,6 @@ func init() {
 func AuthMiddleware(role string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("token")
-		println(tokenString)
 		if err != nil {
 			println(err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})

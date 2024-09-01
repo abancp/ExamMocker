@@ -30,4 +30,6 @@ func Exam(r *gin.Engine) {
 	adminProtected.POST("/exam/save/:id",SaveExam)
 	adminProtected.POST("/exam",AddExam)
 	adminProtected.POST("/topic",AddTopic)
+
+	adminProtected.DELETE("/exam/:id",DeleteExam)
 }

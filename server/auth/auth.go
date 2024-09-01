@@ -171,7 +171,6 @@ func Signup(c *gin.Context) {
 
 func ValidateToken(c *gin.Context) {
 	tokenString, err := c.Cookie("token")
-	println(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
