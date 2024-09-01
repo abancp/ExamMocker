@@ -40,7 +40,7 @@ function Page() {
         className="w-full mt-28 md:mt-16 flex px-4 md:px-40 flex-col gap-16 md:gap-10"
       >
         <div className="flex justify-center md:justify-start">
-          <div className="p-3 border-[3px] rounded-[2rem] border-[#259ac4]">
+          <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">
             <Link href={"/jee"}>
               <div
                 ref={jeeRef}
@@ -54,7 +54,7 @@ function Page() {
           </div>
         </div>
         <div className="flex justify-center md:justify-end">
-          <div className="p-3 border-[3px] rounded-[2rem] border-[#259ac4]">
+          <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">
             <div
               ref={neetRef}
               hidden={neetIsVisible ? false : true}
@@ -66,7 +66,7 @@ function Page() {
           </div>
         </div>
         <div className="flex  justify-center md:justify-start">
-          <div className="p-3 border-[3px] rounded-[2rem] border-[#259ac4]">
+          <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">
             <div
               ref={keamRef}
               hidden={keamIsVisible ? false : true}
@@ -80,13 +80,13 @@ function Page() {
       </section>
       <section
         ref={questionRef}
-        className="border-[3px]  border-[#259ac4] mt-48 md:mt-20 flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
+        className="border-[2px]  border-primary-bright mt-48 md:mt-20 flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-3xl md:text-5xl text-center">Questions</h1>
         <div
           className={`${questionIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
-        <hr className="border-[#259ac4] w-96 mt-5" />
+        <hr className="border-primary w-96 mt-5" />
         <p className="mt-5 font-light ">
           We take immense pride in curating an extensive collection of
           high-quality mock test questions meticulously crafted by IITians and
@@ -103,13 +103,13 @@ function Page() {
       </section>
       <section
         ref={examExperienceRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5  md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[2px] border-primary-bright flex flex-col justify-center items-center p-5  md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-3xl md:text-5xl text-center">Exam Experience</h1>
         <div
           className={`${examExperienceIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
-        <hr className="border-[#259ac4] w-96 mt-5" />
+        <hr className="border-primary w-96 mt-5" />
         <p className="mt-5 font-light ">
           We are committed to providing a mock test experience that is
           meticulously designed to replicate the rigor and atmosphere of actual
@@ -129,13 +129,13 @@ function Page() {
       </section>
       <section
         ref={systemRef}
-        className="mt-10 border-[3px] border-[#259ac4] flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
+        className="mt-10 border-[2px] border-primary-bright flex flex-col justify-center items-center p-5 md:px-10 text-md md:text-xl rounded-[2rem]  w-full "
       >
         <h1 className="text-3xl md:text-5xl text-center">System</h1>
         <div
           className={`${systemIsVisible && "duration-300 shadow-[rgba(10,101,198,0.3)_0px_100px_10000px_130px]"}`}
         ></div>
-        <hr className="border-[#259ac4] w-96 mt-5" />
+        <hr className="border-primary w-96 mt-5" />
         <p className="mt-5 font-light ">
           Our system is meticulously designed to conduct exams securely,
           ensuring robustness and reliability. It is highly scalable and can

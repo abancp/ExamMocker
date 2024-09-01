@@ -134,6 +134,7 @@ function page() {
     const saveQuestion = async () => {
         question.subject = subject
         question.topic = topic
+        question.type = questionType
         if (questionType === "MCQ") {
             const { data } = await axios.post(SERVER_URL + "/admin/add-question", question,{withCredentials:true})
             if (data.success) {
@@ -146,7 +147,7 @@ function page() {
             console.log(data)
         } else {
             const { options, ...filteredQuestion } = question
-            const { data } = await axios.post(SERVER_URL + "/admin/add-question", filteredQuestion)
+            const { data } = await axios.post(SERVER_URL + "/admin/add-question", filteredQuestion,{withCredentials:true})
             if (data.success) {
                 toast.success("Question added successfully")
                 setCurrentTextAreaValue("")
@@ -186,17 +187,17 @@ function page() {
                             ))
                         }
                     </select>
-                    <div id="Q" onClick={changeQuestionType} className={`${optionPointing === "Q" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Question</div>
-                    {questionType === "MCQ" && <div id="A" onClick={changeQuestionType} className={`${optionPointing === "A" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Option A <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "A" }} type="radio" name='answer' /></div>}
-                    {questionType === "MCQ" && <div id="B" onClick={changeQuestionType} className={`${optionPointing === "B" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Option B <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "B" }} type="radio" name='answer' /></div>}
-                    {questionType === "MCQ" && <div id="C" onClick={changeQuestionType} className={`${optionPointing === "C" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Option C <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "C" }} type="radio" name='answer' /></div>}
-                    {questionType === "MCQ" && <div id="D" onClick={changeQuestionType} className={`${optionPointing === "D" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Option D <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "D" }} type="radio" name='answer' /></div>}
-                    {questionType === "Numerical" && <div id="AN" onClick={changeQuestionType} className={`${optionPointing === "AN" && "border-b text-[#259ac4]"} px-2 py-1 border-[#259ac4] hover:bg-[#21213b] cursor-pointer`}>Answer</div>}
+                    <div id="Q" onClick={changeQuestionType} className={`${optionPointing === "Q" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Question</div>
+                    {questionType === "MCQ" && <div id="A" onClick={changeQuestionType} className={`${optionPointing === "A" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Option A <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "A" }} type="radio" name='answer' /></div>}
+                    {questionType === "MCQ" && <div id="B" onClick={changeQuestionType} className={`${optionPointing === "B" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Option B <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "B" }} type="radio" name='answer' /></div>}
+                    {questionType === "MCQ" && <div id="C" onClick={changeQuestionType} className={`${optionPointing === "C" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Option C <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "C" }} type="radio" name='answer' /></div>}
+                    {questionType === "MCQ" && <div id="D" onClick={changeQuestionType} className={`${optionPointing === "D" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Option D <input className='p-1 cursor-pointer' onClick={(e) => { e.stopPropagation(); question.answer = "D" }} type="radio" name='answer' /></div>}
+                    {questionType === "Numerical" && <div id="AN" onClick={changeQuestionType} className={`${optionPointing === "AN" && "border-b text-[#259ac4]"} px-2 py-1 border-primary hover:bg-[#21213b] cursor-pointer`}>Answer</div>}
                     <div id="Save" onClick={saveQuestion} className="rounded-md hover:opacity-80 px-2 py-1 bg-[#259ac4] duration-300 text-white font-semibold cursor-pointer">Save</div>
                 </div>
                 <div className='flex gap-2 h-full'>
-                    <textarea placeholder='type here...' autoFocus id='text-area' onChange={changeTextValue} className='w-full h-full rounded-md p-2 focus:outline-none  bg-transparent border border-[#259ac4] text-white' value={currentTextAreaValue} ></textarea>
-                    <div className='w-full h-full rounded-md p-2  focus:outline-none  bg-transparent border border-[#259ac4] text-white'><h1 className='text-[#ffffffab]'>{currentTextAreaValue?null : "..preview here"}</h1><MathJax>{`${currentTextAreaValue}`}</MathJax></div>
+                    <textarea placeholder='type here...' autoFocus id='text-area' onChange={changeTextValue} className='w-full h-full rounded-md p-2 focus:outline-none  bg-transparent border border-primary text-white' value={currentTextAreaValue} ></textarea>
+                    <div className='w-full h-full rounded-md p-2  focus:outline-none  bg-transparent border border-primary text-white'><h1 className='text-[#ffffffab]'>{currentTextAreaValue?null : "..preview here"}</h1><MathJax>{`${currentTextAreaValue}`}</MathJax></div>
                 </div>
             </div>
         </MathJaxContext>

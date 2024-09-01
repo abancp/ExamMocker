@@ -17,7 +17,7 @@ function page() {
   return (
     <div className='w-full gap-2 flex px-2 flex-col  min-h-screen max-h-fit'>
       <div className='w-full py-2 pb-0'>
-        <div className='border border-[#259ac4] bg-[#0e0e1f] text-[#ffffff] flex flex-col gap-4  font-light w-full p-2 py-3 '>
+        <div className='border border-primary bg-[#0e0e1f] text-[#ffffff] flex flex-col gap-4  font-light w-full p-2 py-3 '>
           <h1 className=' text-center w-full text-xl font-semibold'>Question</h1>
           <div className='flex gap-3'><div className='text-lg font-medium'>Q:</div><div className='font-light'>{question?.question}</div></div>
           {question?.options?.map((option, i) => (

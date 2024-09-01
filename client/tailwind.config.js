@@ -23,7 +23,15 @@ module.exports = {
           '75%': { 'width': '40%' },
           '100%': { 'width': '20%', 'margin-left': '0' },
         }
-      }
+      },
+      borderColor:{
+        'primary':'rgba(37,154,196,0.3)',
+        'primary-bright':'rgba(37,154,196,1)'
+      },
+      backgroundColor:{
+        'primary':'rgba(37,154,196,1)',
+        'secondary':'rgba(37,154,196,0.1)'
+      },
     },
   },
   plugins: [],

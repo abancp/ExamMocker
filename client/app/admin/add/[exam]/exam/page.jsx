@@ -32,7 +32,7 @@ function page() {
         <label> <span className='inline-block text-left w-28'>Exam</span><Input type="text" value="JEE" disabled /> </label>
         <label> <span className='inline-block text-left w-28'>Date & Time</span><Input type="datetime-local" /></label>
         
-        <input type="submit" value="Add Questions" className='border p-1 border-[#259ac4] rounded-md bg-[#21213b] duration-300 cursor-pointer hover:bg-[#323262]' />
+        <input type="submit" value="Add Questions" className='border p-1 border-primary rounded-md bg-[#21213b] duration-300 cursor-pointer hover:bg-[#323262]' />
       </form>
     </div>
   )

@@ -25,6 +25,7 @@ function page() {
   };
 
   useEffect(() => {
+    console.log(exam)
     const dbRequest = window.indexedDB.open("examsDB", 1);
     let exams;
     dbRequest.onupgradeneeded = (e) => {
@@ -35,7 +36,16 @@ function page() {
       const db = e.target.result;
       const transaction = db.transaction("exams", "readwrite");
       exams = transaction.objectStore("exams");
-      exam && exams.add(exam);
+      if (exam) {
+        let getReq = exams.get(examId);
+        getReq.onsuccess = (e) => {
+          if (e.target.result) {
+            exams.put(exam)
+          } else {
+            exams.add(exam)
+          }
+        };
+      }
     };
   }, [exam]);
 
@@ -45,14 +55,10 @@ function page() {
       .then(({ data }) => {
         if (data.success) {
           let examDate = new Date(data.exam?.date);
-          // window.localStorage.setItem("exam-" + examId, JSON.stringify(data.exam))
-          // console.log(exams);
-          // let t = exams?.add(data.exam)
           setExam(data.exam);
           setExamTime(examDate.getTime());
         }
       });
-    // setIsExamWindowOpen(false)
     channel.postMessage("Are you open :)");
   }, []);
 
@@ -166,7 +172,7 @@ function page() {
 
   return (
     <div className="w-full h-screen flex flex-col items-center gap-3 justify-center">
-      <Header/>
+      <Header />
       {fog && (
         <div className="fixed top-0 left-0 w-full h-screen bg-black"></div>
       )}
@@ -181,7 +187,9 @@ function page() {
         )
       )}
       {startExam || (
-        <p className="text-xl md:text-3xl text-[#259ac4] ">left for your exam </p>
+        <p className="text-xl md:text-3xl text-[#259ac4] ">
+          left for your exam{" "}
+        </p>
       )}
       {differenceTimeState < 900000 && (
         <button

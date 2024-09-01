@@ -51,7 +51,7 @@ const JeeExam = () => {
     chemistry: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [showMenu,setShowMenu] = useState(false)
+  const [showMenu, setShowMenu] = useState(false);
   const hashData = useHashString();
   const router = useRouter();
   const optionAlphaToIndex = { A: 0, B: 1, C: 2, D: 3 };
@@ -141,7 +141,7 @@ const JeeExam = () => {
     setCurrentQuestionIndex(questionIndex);
     setCurrentQuestion(questions[subject][questionIndex]);
     let option = answers[subject[0] + "-" + questionIndex];
-    console.log(optionAlphaToIndex[option]);
+    console.log(option);
     if (option) {
       setOption(option);
     } else {
@@ -232,8 +232,12 @@ const JeeExam = () => {
     inputs.forEach((option) => {
       option.checked = false;
     });
+    const numericalInput = window.document.getElementById("numerical_input");
+    if(numericalInput){
+      numericalInput.value = null;
+    }
   };
-
+    
   const setOption = (optionAlpha) => {
     setSelectedOption(optionAlpha);
     const inputs = window.document.getElementsByName("mcq_option");
@@ -243,8 +247,8 @@ const JeeExam = () => {
   };
 
   const toggleMenu = () => {
-    setShowMenu((prev) => (!prev))
-  }
+    setShowMenu((prev) => !prev);
+  };
 
   const submit = async () => {
     const hash = await hashData(answers);
@@ -348,11 +352,11 @@ const JeeExam = () => {
           <svg
             onClick={toggleMenu}
             xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
+            width="16"
+            height="16"
             fill="currentColor"
-            className="bi bi-list block md:hidden text-xl"
-            viewBox="0 0 30 30"
+            className="bi bi-list block md:hidden cursor-pointer text-xl font-bold w-7 h-7"
+            viewBox="0 0 16 16"
           >
             <path
               fill-rule="evenodd"
@@ -403,100 +407,109 @@ const JeeExam = () => {
               <h1 className="p-3 text-xl font-sans font-semibold">
                 <MathJax>{currentQuestion?.question}</MathJax>
               </h1>
-              <div className="flex flex-col gap-3 p-3 ">
-                <label
-                  htmlFor="mcq_option_1"
-                  className="w-fit cursor-pointer flex gap-3"
-                >
-                  <input
-                    onChange={handleOptionChange}
-                    className="cursor-pointer option-input "
-                    type="radio"
-                    name="mcq_option"
-                    id="mcq_option_1"
-                    value="A"
-                  />
-                  <MathJax>
-                    <h1 className="text-xl font-medium">
-                      {" "}
-                      (1){" "}
-                      <span className="ml-5">
-                        {currentQuestion?.options[0]}
-                      </span>
-                    </h1>
-                  </MathJax>
-                </label>
-                <label
-                  htmlFor="mcq_option_2"
-                  className="w-fit cursor-pointer flex gap-3"
-                >
-                  <input
-                    onChange={handleOptionChange}
-                    className="cursor-pointer option-input "
-                    type="radio"
-                    name="mcq_option"
-                    id="mcq_option_2"
-                    value="B"
-                  />
-                  <MathJax>
-                    <h1 className="text-xl font-medium">
-                      {" "}
-                      (2){" "}
-                      <span className="ml-5">
-                        {currentQuestion?.options[1]}
-                      </span>
-                    </h1>
-                  </MathJax>
-                </label>
-                <label
-                  htmlFor="mcq_option_3"
-                  className="w-fit cursor-pointer flex gap-3"
-                >
-                  <input
-                    onChange={handleOptionChange}
-                    className="cursor-pointer option-input"
-                    type="radio"
-                    name="mcq_option"
-                    id="mcq_option_3"
-                    value="C"
-                  />
-                  <MathJax>
-                    <h1 className="text-xl font-medium">
-                      {" "}
-                      (3){" "}
-                      <span className="ml-5">
-                        {currentQuestion?.options[2]}
-                      </span>
-                    </h1>
-                  </MathJax>
-                </label>
-                <label
-                  htmlFor="mcq_option_4"
-                  className="w-fit cursor-pointer flex gap-3"
-                >
-                  <input
-                    onChange={handleOptionChange}
-                    className="cursor-pointer option-input "
-                    type="radio"
-                    name="mcq_option"
-                    id="mcq_option_4"
-                    value="D"
-                  />
-                  <MathJax>
-                    <h1 className="text-xl font-medium">
-                      {" "}
-                      (4){" "}
-                      <span className="ml-5">
-                        {currentQuestion?.options[3]}
-                      </span>
-                    </h1>
-                  </MathJax>
-                </label>
-              </div>
+              {currentQuestion?.type == "MCQ" ? (
+                <div className="flex flex-col gap-3 p-3 ">
+                  <label
+                    htmlFor="mcq_option_1"
+                    className="w-fit cursor-pointer flex gap-3"
+                  >
+                    <input
+                      onChange={handleOptionChange}
+                      className="cursor-pointer option-input "
+                      type="radio"
+                      name="mcq_option"
+                      id="mcq_option_1"
+                      value="A"
+                    />
+                    <MathJax>
+                      <h1 className="text-xl font-medium">
+                        {" "}
+                        (1){" "}
+                        <span className="ml-5">
+                          {currentQuestion?.options[0]}
+                        </span>
+                      </h1>
+                    </MathJax>
+                  </label>
+                  <label
+                    htmlFor="mcq_option_2"
+                    className="w-fit cursor-pointer flex gap-3"
+                  >
+                    <input
+                      onChange={handleOptionChange}
+                      className="cursor-pointer option-input "
+                      type="radio"
+                      name="mcq_option"
+                      id="mcq_option_2"
+                      value="B"
+                    />
+                    <MathJax>
+                      <h1 className="text-xl font-medium">
+                        {" "}
+                        (2){" "}
+                        <span className="ml-5">
+                          {currentQuestion?.options[1]}
+                        </span>
+                      </h1>
+                    </MathJax>
+                  </label>
+                  <label
+                    htmlFor="mcq_option_3"
+                    className="w-fit cursor-pointer flex gap-3"
+                  >
+                    <input
+                      onChange={handleOptionChange}
+                      className="cursor-pointer option-input"
+                      type="radio"
+                      name="mcq_option"
+                      id="mcq_option_3"
+                      value="C"
+                    />
+                    <MathJax>
+                      <h1 className="text-xl font-medium">
+                        {" "}
+                        (3){" "}
+                        <span className="ml-5">
+                          {currentQuestion?.options[2]}
+                        </span>
+                      </h1>
+                    </MathJax>
+                  </label>
+                  <label
+                    htmlFor="mcq_option_4"
+                    className="w-fit cursor-pointer flex gap-3"
+                  >
+                    <input
+                      onChange={handleOptionChange}
+                      className="cursor-pointer option-input "
+                      type="radio"
+                      name="mcq_option"
+                      id="mcq_option_4"
+                      value="D"
+                    />
+                    <MathJax>
+                      <h1 className="text-xl font-medium">
+                        {" "}
+                        (4){" "}
+                        <span className="ml-5">
+                          {currentQuestion?.options[3]}
+                        </span>
+                      </h1>
+                    </MathJax>
+                  </label>
+                </div>
+              ) : (
+                <input
+                  id="numerical_input"
+                  type="number"
+                  value={selectedOption}
+                  onChange={handleOptionChange}
+                  className="border-2 rounded-md focus:outline-4 ml-3 px-1 focus:outline-[rgba(12,12,230,0.7)] border-blue-500"
+                />
+              )}
             </div>
 
-            <div className="flex mt-5 gap-3 md:text-lg text-md"
-            >
+            <div className="flex mt-5 gap-3 md:text-lg text-md">
               <button
                 onClick={saveAndNext}
                 className="bg-green-600  px-2 py-1 font-semibold text-white"
@@ -547,24 +560,30 @@ const JeeExam = () => {
             </div>
           </div>
 
-          <div className={`md:w-[30%] right-0 top-0 overflow-y-scroll  h-full fixed md:static bg-white p-5 md:block md:h-[8rem] pt-5 ${showMenu?"block":"hidden"} `}>
-            <div className="w-full justify-end flex md:hidden ">
+          <div
+            className={`md:w-[30%] right-0 top-0 overflow-y-scroll  h-full fixed md:static bg-white p-5 md:block  pt-5 ${showMenu ? "block" : "hidden"} `}
+          >
+            <div className="w-full justify-betwean items-center flex md:hidden ">
+              <div className="w-full">
+                <div className="text-blue-600">
+                  <h1 className="font-semibold text-lg sm:hidden">
+                    Candidate Name : Aban Muhammed C P
+                  </h1>
+                </div>
+              </div>
               <svg
                 onClick={toggleMenu}
                 xmlns="http://www.w3.org/2000/svg"
-                width="30"
-                height="30"
+                width="16"
+                height="16"
                 fill="currentColor"
-                className="bi bi-list block cursor-pointer md:hidden font-bold text-xl"
-                viewBox="0 0 30 30"
+                className="bi bi-x-lg w-7 text-red-700 h-7 font-bolg text-lg"
+                viewBox="0 0 16 16"
               >
-                <path
-                  fill-rule="evenodd"
-                  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
-                />
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
               </svg>
             </div>
-            <div className="grid gap-2 grid-cols-2 w-">
+            <div className="grid gap-2 mt-2 grid-cols-2 w-">
               <div className="flex gap-1  items-center">
                 {" "}
                 <QuestionIcon

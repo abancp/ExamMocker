@@ -156,7 +156,7 @@ function Page() {
     <div className="w-full flex flex-col items-center justify-center gap-10 p-10 pt-20">
       {showConfetti && 
         <div className="w-full h-screen fixed top-0 left-0 z-100 flex justify-center items-center">
-          <div className="rounded-md border text-[#259ac4] border-[#259ac4] w-[40rem] h-[25rem] backdrop-blur-lg flex flex-col justify-center items-center z-1000 font-bold text-4xl text-center"> Rank : 234 <br/>  Percentile : 99.32</div>
+          <div className="rounded-md border text-[#259ac4] border-primary w-[40rem] h-[25rem] backdrop-blur-lg flex flex-col justify-center items-center z-1000 font-bold text-4xl text-center"> Rank : 234 <br/>  Percentile : 99.32</div>
           <Confetti
             gravity={0.25}
             numberOfPieces={confettiParticle}

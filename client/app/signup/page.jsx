@@ -33,16 +33,16 @@ function Signup() {
     }
     return (
         <div className="w-full h-screen flex pl-40 p-10 items-center ">
-            <div className="w-[450px] py-3 flex flex-col justify-around items-center h-[560px] border border-[#259ac4] rounded-lg ">
+            <div className="w-[450px] py-3 flex flex-col justify-around items-center h-[560px] border border-primary rounded-lg ">
                 <h1 className=" text-3xl font-thin font-sans">ExamMocker Signup</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5" action="">
-                    <input placeholder="Name" className="bg-transparent  p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="text" />
-                    <input placeholder="Email" className="bg-transparent p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="text" />
-                    <input placeholder="Password" className="bg-transparent p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="text" />
-                    <input placeholder="Confirm Password" className="bg-transparent p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="text" />
-                    <input placeholder="Date Of Birth" className="bg-transparent p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="date" />
-                    <input placeholder="State" className="bg-transparent p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none" type="text" />
-                    <input placeholder="Submit" className=" p-1 rounded-lg text-lg border border-[#259ac4] focus:outline-none outline-none  hover:bg-[#335f805f] duration-300 cursor-pointer bg-[#234a685f]" type="submit" />
+                    <input placeholder="Name" className="bg-transparent  p-1 rounded-lg text-lg border border-primary focus:outline-none" type="text" />
+                    <input placeholder="Email" className="bg-transparent p-1 rounded-lg text-lg border border-primary focus:outline-none" type="text" />
+                    <input placeholder="Password" className="bg-transparent p-1 rounded-lg text-lg border border-primary focus:outline-none" type="text" />
+                    <input placeholder="Confirm Password" className="bg-transparent p-1 rounded-lg text-lg border border-primary focus:outline-none" type="text" />
+                    <input placeholder="Date Of Birth" className="bg-transparent p-1 rounded-lg text-lg border border-primary focus:outline-none" type="date" />
+                    <input placeholder="State" className="bg-transparent p-1 rounded-lg text-lg border border-primary focus:outline-none" type="text" />
+                    <input placeholder="Submit" className=" p-1 rounded-lg text-lg border border-primary focus:outline-none outline-none  hover:bg-[#335f805f] duration-300 cursor-pointer bg-[#234a685f]" type="submit" />
                 </form>
                 <h5>already have a account <Link className="text-blue-500" href={'/login'}> login here </Link></h5>
             </div>
