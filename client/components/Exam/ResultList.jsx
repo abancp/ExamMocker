@@ -33,7 +33,7 @@ function ExamList() {
       {exams?.map((exam, i) => (
         <Link
           href={"jee/result/" + exam.exam}
-          className={`w-full md:flex cursor-pointer border-[#259ac4] group  hover:border-[#5cbc20] duration-300 justify-between  items-center rounded-lg border  md:h-12`}
+          className={`w-full md:flex cursor-pointer border-primary group  hover:border-[#5cbc20] duration-300 justify-between  items-center rounded-lg border  md:h-12`}
         >
           <div
             className={`md:w-14 w-full duration-300  group-hover:bg-[#5cbc20] bg-[#259ac4] text-black text-lg font-bold flex items-center justify-center h-full text-center md:rounded-l-lg md:rounded-tr-none rounded-t-lg `}

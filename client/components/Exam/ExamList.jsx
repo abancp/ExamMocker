@@ -41,10 +41,7 @@ function ExamList() {
       {exams?.map((exam, i) => (
         <Link
           href={`${registeredExams?.includes(exam._id) ? "/jee/waiting/" + exam._id : "/jee/register/" + exam._id}`}
-          onClick={() => {
-            toggleSelectExam(exam._id);
-          }}
-          className={`w-full md:flex cursor-pointer group  border-[#259ac4] hover:border-[#5cbc20] duration-300 justify-around  items-center rounded-lg border md:h-12 `}
+          className={`w-full md:flex cursor-pointer group  border-primary hover:border-[#5cbc20] duration-300 justify-around  items-center rounded-lg border md:h-12 `}
         >
           <div
             className={`md:w-14 w-full h-12  duration-300  group-hover:bg-[#5cbc20] bg-[#259ac4]  text-black text-lg font-bold flex items-center justify-center h-full text-center rounded-t-lg md:rounded-tr-none md:rounded-l-lg`}

@@ -19,8 +19,8 @@ function Header() {
 
   return (
     <div className=" fixed top-5 left-0 flex justify-center items-center w-full">
-      <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-[#259ac4]">
-        <div className="rounded-full flex justify-center items-center cursor-pointer border-r border-[#259ac4] w-11 h-full">
+      <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-primary">
+        <div className="rounded-full flex justify-center items-center cursor-pointer border-r border-primary w-11 h-full">
           <Link href={"/"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +34,7 @@ function Header() {
             </svg>
           </Link>
         </div>
-        <div className=" gap-2 hidden md:flex text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]">
+        <div className=" gap-2 hidden md:flex text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary">
           <h1>Exams </h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -52,14 +52,14 @@ function Header() {
         </div>
           <Link
             href="/results"
-            className="flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]"
+            className="flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary"
           >
             <h1>Results</h1>
           </Link>
         {admin && (
           <Link
             href="/admin"
-            className="hidden md:flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-[#259ac4]"
+            className="hidden md:flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary"
           >
             <h1>Admin</h1>
           </Link>
@@ -70,7 +70,7 @@ function Header() {
         <div></div>
         <div></div>
         
-        <div className="flex rounded-full border-x border-[#259ac4]">
+        <div className="flex rounded-full border-x border-primary">
           {name ? null : (
             <Link
               href={"/signup"}
@@ -96,7 +96,7 @@ function Header() {
             </Link>
           )}
         </div>
-        <div className="rounded-full flex justify-center items-center cursor-pointer  border-l border-[#259ac4] w-11 h-full">
+        <div className="rounded-full flex justify-center items-center cursor-pointer  border-l border-primary w-11 h-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="30"
