@@ -7,6 +7,8 @@ import axios from "axios";
 function Header() {
   const [name, setName] = useState(null);
   const [admin, setAdmin] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showExams, setShowExams] = useState(false);
 
   useEffect(() => {
     axios
@@ -17,8 +19,12 @@ function Header() {
       });
   }, []);
 
+  const toggleMenu = () => {
+    setShowMenu((prev) => !prev);
+  };
+
   return (
-    <div className=" fixed top-5 left-0 flex justify-center items-center w-full">
+    <div className=" fixed top-5 left-0 flex flex-col gap-5 justify-center items-center w-full">
       <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-primary">
         <div className="rounded-full flex justify-center items-center cursor-pointer border-r border-primary w-11 h-full">
           <Link href={"/"}>
@@ -50,12 +56,12 @@ function Header() {
             />
           </svg>
         </div>
-          <Link
-            href="/results"
-            className="flex cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary"
-          >
-            <h1>Results</h1>
-          </Link>
+        <Link
+          href="/results"
+          className="md:flex hidden cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary"
+        >
+          <h1>Results</h1>
+        </Link>
         {admin && (
           <Link
             href="/admin"
@@ -64,12 +70,28 @@ function Header() {
             <h1>Admin</h1>
           </Link>
         )}
+        <div className="flex md:hidden cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary">
+          <svg
+            onClick={toggleMenu}
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-list block md:hidden cursor-pointer text-sm font-bold w-5 h-5"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
+            />
+          </svg>
+        </div>
 
         <div></div>
         <div></div>
         <div></div>
         <div></div>
-        
+
         <div className="flex rounded-full border-x border-primary">
           {name ? null : (
             <Link
@@ -109,6 +131,30 @@ function Header() {
           </svg>
         </div>
       </div>
+      {showMenu && (
+        <div className="border flex gap-3 justify-around items-center border-primary rounded-full w-[97%] backdrop-blur-sm px-3">
+          <Link
+            href={"/"}
+            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 p-3"
+          >
+            Exams
+          </Link>
+          <Link
+            href={"/results"}
+            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 p-3"
+          >
+            Results
+          </Link>
+          {admin && (
+            <Link
+              href={"/admin"}
+              className="border-primary hover:bg-[#335f805f] duration-300 border-x rounded-full px-4 p-3"
+            >
+              Admin
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }
