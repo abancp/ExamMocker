@@ -8,7 +8,6 @@ function Header() {
   const [name, setName] = useState(null);
   const [admin, setAdmin] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [showExams, setShowExams] = useState(false);
 
   useEffect(() => {
     axios
@@ -40,22 +39,9 @@ function Header() {
             </svg>
           </Link>
         </div>
-        <div className=" gap-2 hidden md:flex text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary">
+        <Link href={"/exams"} className=" gap-2 hidden md:flex text-[rgb(152,211,255)] cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary">
           <h1>Exams </h1>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-chevron-down"
-            viewBox="0 0 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
-            />
-          </svg>
-        </div>
+        </Link>
         <Link
           href="/results"
           className="md:flex hidden cursor-pointer duration-300 hover:bg-[#335f805f]  items-center p-3 px-4  rounded-full border-x border-primary"
@@ -132,29 +118,30 @@ function Header() {
         </div>
       </div>
       {showMenu && (
-        <div className="border flex gap-3 justify-around items-center border-primary rounded-full w-[97%] backdrop-blur-sm px-3">
+        <div className="border h-11 flex md:hidden gap-3 justify-around items-center border-primary rounded-full w-[97%] backdrop-blur-sm px-3">
           <Link
-            href={"/"}
-            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 p-3"
+            href={"/exams"}
+            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 h-full p-2"
           >
             Exams
           </Link>
           <Link
             href={"/results"}
-            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 p-3"
+            className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 p-2 h-full"
           >
             Results
           </Link>
           {admin && (
             <Link
               href={"/admin"}
-              className="border-primary hover:bg-[#335f805f] duration-300 border-x rounded-full px-4 p-3"
+              className="border-primary hover:bg-[#335f805f] duration-300 border-x rounded-full px-4 p-2 h-full"
             >
               Admin
             </Link>
           )}
         </div>
       )}
+      
     </div>
   );
 }
