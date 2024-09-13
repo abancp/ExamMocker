@@ -23,7 +23,7 @@ function Header() {
   };
 
   return (
-    <div className=" fixed top-5 left-0 flex flex-col gap-5 justify-center items-center w-full">
+    <div className="text-primary fixed top-5 left-0 flex flex-col gap-4 justify-center items-center w-full">
       <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-primary">
         <div className="rounded-full flex justify-center items-center cursor-pointer border-r border-primary w-11 h-full">
           <Link href={"/"}>
@@ -118,7 +118,7 @@ function Header() {
         </div>
       </div>
       {showMenu && (
-        <div className="border h-11 flex md:hidden gap-3 justify-around items-center border-primary rounded-full w-[97%] backdrop-blur-sm px-3">
+        <div className=" text-primary border z-[100] h-11 flex md:hidden gap-3 justify-around items-center border-primary rounded-full w-[97%] backdrop-blur-sm px-3">
           <Link
             href={"/exams"}
             className="border-primary hover:bg-[#335f805f] border-x duration-300 rounded-full px-4 h-full p-2"

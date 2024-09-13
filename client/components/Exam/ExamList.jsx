@@ -27,7 +27,7 @@ function ExamList() {
 
   return (
     <div className="w-full flex flex-col gap-3 h-fit ">
-      <div className="w-full hidden md:flex  text-black flex justify-around font-extrabold items-center rounded-lg  bg-[#259ac4] h-12">
+      <div className="w-full hidden md:flex  text-black justify-around font-extrabold items-center rounded-lg  bg-[#259ac4] h-12">
         <div className="w-14 flex justify-center items-center">
           <h1 className="text-lg">No</h1>
         </div>
@@ -41,10 +41,10 @@ function ExamList() {
       {exams?.map((exam, i) => (
         <Link
           href={`${registeredExams?.includes(exam._id) ? "/jee/waiting/" + exam._id : "/jee/register/" + exam._id}`}
-          className={`w-full md:flex cursor-pointer group  border-primary hover:border-[#5cbc20] duration-300 justify-around  items-center rounded-lg border md:h-12 `}
+          className={`w-full md:flex cursor-pointer group bg-secondary  border-primary hover:border-[#5cbc20] duration-300 justify-around  items-center rounded-lg border md:h-12 `}
         >
           <div
-            className={`md:w-14 w-full h-12  duration-300  group-hover:bg-[#5cbc20] bg-[#259ac4]  text-black text-lg font-bold flex items-center justify-center h-full text-center rounded-t-lg md:rounded-tr-none md:rounded-l-lg`}
+            className={`md:w-14 w-full duration-300  group-hover:bg-[#5cbc20] bg-[#259ac4]  text-black text-lg font-bold flex items-center justify-center h-full text-center rounded-t-lg md:rounded-tr-none md:rounded-l-lg`}
           >
             {i + 1}
           </div>

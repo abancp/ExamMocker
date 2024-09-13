@@ -1,6 +1,7 @@
 "use client";
-import Header from "../components/Header";
 
+import Header from "../components/Header";
+import RegisterdExams from "../components/RegisteredExams";
 import useOnScreen from "../hooks/useOnScreen";
 import Link from "next/link";
 
@@ -34,10 +35,12 @@ function Page() {
           </div>
         </div>
       </main>
-
+      <section>
+        <RegisterdExams/>        
+      </section>
       <section
         id="exams"
-        className="w-full mt-28 md:mt-16 flex px-4 md:px-40 flex-col gap-16 md:gap-10"
+        className="w-full mt-48 md:mt-16 flex px-4 md:px-40 flex-col gap-16 md:gap-10"
       >
         <div className="flex justify-center md:justify-start">
           <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">

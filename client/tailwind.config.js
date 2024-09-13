@@ -32,6 +32,9 @@ module.exports = {
         'primary':'rgba(37,154,196,1)',
         'secondary':'rgba(37,154,196,0.1)'
       },
+      textColor:{
+        'primary':'rgb(152,211,255)'
+      }
     },
   },
   plugins: [],
