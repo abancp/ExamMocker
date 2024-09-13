@@ -765,22 +765,98 @@ func GetAttendedExams(c *gin.Context) {
 	}
 }
 
-func DeleteExam(c *gin.Context){
+func DeleteExam(c *gin.Context) {
 	id := c.Param("id")
-	_id,err := primitive.ObjectIDFromHex(id)
-	if err != nil{
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"something went wrong!"})
+	_id, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
 		return
 	}
 	db := config.DB
-	_,err = db.Collection("exams").DeleteOne(context.Background(),bson.M{"_id":_id})
-	if err != nil{
-		if err == mongo.ErrNoDocuments{
-			c.JSON(http.StatusNotFound,gin.H{"error":"exam not found!"})
+	_, err = db.Collection("exams").DeleteOne(context.Background(), bson.M{"_id": _id})
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "exam not found!"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError,gin.H{"error":"something went wrong!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{"success":true,"message":"exam deleted successfully!"})
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "exam deleted successfully!"})
+}
+
+func GetRegisteredExamTimes(c *gin.Context) {
+	userEmail, exist := c.Get("userEmail")
+	if !exist {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "somthings went wrong!"})
+		return
+	}
+	print(userEmail)
+	var results []bson.M
+	db := config.DB
+	pipeline := mongo.Pipeline{
+		bson.D{
+			{Key: "$match", Value: bson.D{
+				{Key: "submittedTime", Value: bson.D{{Key: "$exists", Value: false}}},
+			}},
+		},
+		bson.D{
+			{Key: "$addFields", Value: bson.D{
+				{Key: "examObjectId", Value: bson.D{
+					{Key: "$toObjectId", Value: "$exam"}, // Convert exam string to ObjectId
+				}},
+			}},
+		},
+		bson.D{
+			{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "exams"},
+				{Key: "let", Value: bson.D{{Key: "examId", Value: "$examObjectId"}}}, // Define a variable for use in the pipeline
+				{Key: "pipeline", Value: mongo.Pipeline{
+					bson.D{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$examId"}}, // Match documents by ObjectId
+						}},
+					}}},
+					bson.D{{Key: "$project", Value: bson.D{
+						{Key: "_id", Value: 1},      // Include _id field
+						{Key: "date", Value: 1}, // Include examDate field
+					}}},
+				}},
+				{Key: "as", Value: "examDetails"},
+			}},
+		},
+		bson.D{
+			{Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$examDetails"},
+				{Key: "preserveNullAndEmptyArrays", Value: true}, // Keep documents that do not have a match
+			}},
+		},
+		bson.D{
+			{Key: "$replaceRoot", Value: bson.D{
+				{Key: "newRoot", Value: "$examDetails"}, // Replace the root with examDetails object
+			}},
+		},
+		bson.D{
+			{Key: "$project", Value: bson.D{
+				{Key: "_id", Value: 1},
+				{Key: "date", Value: "$date"}, // Ensure the final field is named 'date'
+			}},
+		},
+	}
+
+	cursor, err := db.Collection("jee-users").Aggregate(context.Background(), pipeline)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
+		return
+	}
+	defer cursor.Close(context.Background())
+
+	// Iterate through the results
+	if err = cursor.All(context.Background(), &results); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "somethins went wrong!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "exams": results})
 }

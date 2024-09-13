@@ -18,6 +18,7 @@ func Exam(r *gin.Engine) {
 	userProtected.POST("/register-exam/:exam/:id",Register)
 	userProtected.GET("/result/:id",GetResult)
 	userProtected.GET("/exams-attented/:exam",GetAttendedExams)
+	userProtected.GET("/time/exam-registered",GetRegisteredExamTimes)
 	
 	adminProtected := r.Group("/admin",auth.AuthMiddleware("admin"))
 	adminProtected.GET("/questions",GetQuestions)
