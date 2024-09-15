@@ -1,12 +1,14 @@
 "use client"
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 
 function page() {
   const {examId} = useParams()
   const router = useRouter()
   const handleClick = ()=>{
-    router.push("/jee/result/"+examId)
+    toast.info("You get notified via email when result declared!")
+    router.push("/")
   }
 
   return (

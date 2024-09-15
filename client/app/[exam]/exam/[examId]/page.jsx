@@ -233,11 +233,11 @@ const JeeExam = () => {
       option.checked = false;
     });
     const numericalInput = window.document.getElementById("numerical_input");
-    if(numericalInput){
+    if (numericalInput) {
       numericalInput.value = null;
     }
   };
-    
+
   const setOption = (optionAlpha) => {
     setSelectedOption(optionAlpha);
     const inputs = window.document.getElementsByName("mcq_option");
@@ -282,7 +282,8 @@ const JeeExam = () => {
       .catch((data) => {
         let errMsg = data.response.data.error || "something went wrong!";
         toast.error(
-          errMsg + " Don't worry . you can submit in home page within 23 hrs",
+          //TODO:errMsg + " Don't worry . you can try in home page within 23 hrs",
+          errMsg + " Try again",
         );
       });
     router.push("/jee/review/" + examId);

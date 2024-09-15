@@ -24,7 +24,8 @@
     "react-use": "^17.5.1",
     "recharts": "^2.12.7",
     "sonner": "^1.5.0",
-    "toaster": "^0.1.2"
+    "toaster": "^0.1.2",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/mathjax": "^0.0.40",

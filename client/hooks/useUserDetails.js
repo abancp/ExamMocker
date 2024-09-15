@@ -1,14 +1,11 @@
-"use client"
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Toaster } from "sonner";
-const inter = Inter({ subsets: ["latin"] });
-import {useEffect} from "react"
-import useStore from "../store/store"
+"use client";
+
 import axios from "axios";
 import SERVER_URL from "../config/serverUrl";
+import useStore from "../store/store";
+import { useEffect } from "react";
 
-export default function RootLayout({ children }) {
+function useUserDetails() {
   const [setIsLogin, setUsername, setAdmin] = useStore((state) => [
     state.setIsLogin,
     state.setUsername,
@@ -26,12 +23,6 @@ export default function RootLayout({ children }) {
         setAdmin(data.claims.admin);
       });
   }, []);
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Toaster richColors position="bottom-right" />
-        {children}
-      </body>
-    </html>
-  );
 }
+
+export default useUserDetails;

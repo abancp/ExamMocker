@@ -17,12 +17,7 @@ function page() {
   const [warningTimer, setWarningTimer] = useState(10);
   const [exam, setExam] = useState({});
 
-  const channel = new BroadcastChannel(examId);
-  channel.onmessage = (e) => {
-    if (e.data === "Yes, Iam Open :)") {
-      setIsExamWindowOpen(true);
-    }
-  };
+  
 
   useEffect(() => {
     console.log(exam)
@@ -59,13 +54,12 @@ function page() {
           setExamTime(examDate.getTime());
         }
       });
-    channel.postMessage("Are you open :)");
   }, []);
 
   useEffect(() => {
     let differenceTime = examTime - Date.now();
     if (differenceTime < 60_000 && differenceTime > -3600_000) {
-      openWindow();
+      goToExam();
     }
     //days
     let days = differenceTime / 86400_000;
@@ -140,14 +134,10 @@ function page() {
 
   const handleClick = (e) => {
     e.preventDefault();
-    openWindow();
+    goToExam();
   };
 
-  const openWindow = () => {
-    if (isExamWindowOpen) {
-      toast.info("Exam Window Already Opened!");
-      return;
-    }
+  const goToExam = () => {
     if (differenceTimeState < -3600_000) {
       toast.info("Your Time is end!");
       return;
@@ -155,19 +145,7 @@ function page() {
     if (differenceTimeState > 900_000) {
       toast.info("Exam not started!");
     }
-    if (isExamWindowOpen) {
-      toast.info("Exam Window Already Opened!");
-      return;
-    }
-    channel.postMessage("Are you open :)");
-
-    setIsExamWindowOpen(true);
-    console.log("opening");
-    window.open(
-      clientUrl + "/jee/exam/" + examId + "/login",
-      "_blank",
-      "noopener,noreferrer,fullscreen=yes,scrollbars=yes",
-    );
+    router.push("/jee/exam/"+examId) 
   };
 
   return (

@@ -1,22 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import SERVER_URL from "../config/serverUrl";
-import axios from "axios";
+import useStore from "../store/store";
 
 function Header() {
-  const [name, setName] = useState(null);
-  const [admin, setAdmin] = useState(false);
+  const [isLogin,username,admin] = useStore((state)=>[state.isLogin,state.username,state.admin]) 
   const [showMenu, setShowMenu] = useState(false);
-
-  useEffect(() => {
-    axios
-      .get(SERVER_URL + "/validate-token", { withCredentials: true })
-      .then(({ data }) => {
-        setName(data.claims.username);
-        setAdmin(data.claims.admin);
-      });
-  }, []);
 
   const toggleMenu = () => {
     setShowMenu((prev) => !prev);
@@ -79,7 +68,7 @@ function Header() {
         <div></div>
 
         <div className="flex rounded-full border-x border-primary">
-          {name ? null : (
+          {username ? null : (
             <Link
               href={"/signup"}
               className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full "
@@ -87,7 +76,7 @@ function Header() {
               Signup
             </Link>
           )}
-          {name ? null : (
+          {username ? null : (
             <Link
               href={"/login"}
               className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full "
@@ -95,12 +84,12 @@ function Header() {
               Login
             </Link>
           )}
-          {name && (
+          {username && (
             <Link
               href={"/profile"}
               className="px-4 p-3 text-full duration-300 hover:bg-[#335f805f] flex items-center rounded-full "
             >
-              {name}
+              {username}
             </Link>
           )}
         </div>
