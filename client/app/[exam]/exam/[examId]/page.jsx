@@ -20,6 +20,13 @@ const JeeExam = () => {
     MForReview: 0,
     MForReviewAndA: 0,
   });
+  const questionStateIndexToState = {
+    1: "notVisited",
+    2: "notAnswered",
+    3: "answered",
+    4: "MForReview",
+    5: "MForReviewAndA",
+  };
   const [questionIndexes, setQuestionIndexes] = useState({
     mathematics: [
       2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -113,13 +120,9 @@ const JeeExam = () => {
   const changeSubject = (e) => {
     lastIndexes[subject] = currentQuestionIndex;
     setSubject(e.target.id);
-    console.log(subject);
-    console.log(questions);
-    console.log(questions);
     if (questionIndexes[e.target.id][lastIndexes[e.target.id]] === 1) {
       questionIndexes[e.target.id][lastIndexes[e.target.id]] = 2;
     }
-
     setCurrentQuestionIndex(lastIndexes[e.target.id]);
     setCurrentQuestion(questions[e.target.id][lastIndexes[e.target.id]]);
     let option = answers[e.target.id[0] + "-" + lastIndexes[e.target.id]];
@@ -136,8 +139,12 @@ const JeeExam = () => {
     console.log(questions);
     if (questionIndexes[subject][questionIndex] === 1) {
       questionIndexes[subject][questionIndex] = 2;
+      setQuestionIndexesMap((prev) => ({
+        ...prev,
+        notVisited: prev.notVisited - 1,
+        notAnswered: prev.notAnswered + 1,
+      }));
     }
-
     setCurrentQuestionIndex(questionIndex);
     setCurrentQuestion(questions[subject][questionIndex]);
     let option = answers[subject[0] + "-" + questionIndex];
@@ -169,6 +176,25 @@ const JeeExam = () => {
         ),
       }));
     }
+    console.log(questionIndexes[currentQuestionIndex]);
+    if (
+      questionStateIndexToState[
+      questionIndexes[subject][currentQuestionIndex]
+      ] !== "answered"
+    ) {
+      setQuestionIndexesMap((prev) => ({
+        ...prev,
+        answered: prev.answered + 1,
+        [questionStateIndexToState[
+          questionIndexes[subject][currentQuestionIndex]
+        ]]:
+          prev[
+          questionStateIndexToState[
+          questionIndexes[subject][currentQuestionIndex]
+          ]
+          ] - 1,
+      }));
+    }
     let transaction = answersDB.transaction("exams", "readwrite");
     let answersStore = transaction.objectStore("exams");
     answersStore?.put({ _id: "response-" + examId, answers });
@@ -190,6 +216,25 @@ const JeeExam = () => {
         ...prev,
         [subject[0] + "-" + currentQuestionIndex]: selectedOption,
       }));
+
+      if (
+        questionStateIndexToState[
+        questionIndexes[subject][currentQuestionIndex]
+        ] !== "MForReviewAndA"
+      ) {
+        setQuestionIndexesMap((prev) => ({
+          ...prev,
+          MForReviewAndA: prev.MForReviewAndA + 1,
+          [questionStateIndexToState[
+            questionIndexes[subject][currentQuestionIndex]
+          ]]:
+            prev[
+            questionStateIndexToState[
+            questionIndexes[subject][currentQuestionIndex]
+            ]
+            ] - 1,
+        }));
+      }
     } else {
       setQuestionIndexes((prevIndexes) => ({
         ...prevIndexes,
@@ -197,6 +242,24 @@ const JeeExam = () => {
           i === currentQuestionIndex ? 4 : item,
         ),
       }));
+      if (
+        questionStateIndexToState[
+        questionIndexes[subject][currentQuestionIndex]
+        ] !== "MForReview"
+      ) {
+        setQuestionIndexesMap((prev) => ({
+          ...prev,
+          MForReview: prev.MForReview + 1,
+          [questionStateIndexToState[
+            questionIndexes[subject][currentQuestionIndex]
+          ]]:
+            prev[
+            questionStateIndexToState[
+            questionIndexes[subject][currentQuestionIndex]
+            ]
+            ] - 1,
+        }));
+      }
     }
     if (currentQuestionIndex < 29) {
       changeQuestionNumber(currentQuestionIndex + 1);
@@ -228,6 +291,7 @@ const JeeExam = () => {
 
   const clearOption = () => {
     setSelectedOption(null);
+
     const inputs = window.document.getElementsByName("mcq_option");
     inputs.forEach((option) => {
       option.checked = false;
@@ -240,6 +304,7 @@ const JeeExam = () => {
 
   const setOption = (optionAlpha) => {
     setSelectedOption(optionAlpha);
+
     const inputs = window.document.getElementsByName("mcq_option");
     inputs.forEach((option, i) => {
       option.checked = i === optionAlphaToIndex[optionAlpha] ? true : false;
