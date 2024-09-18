@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import RegisterdExams from "../components/RegisteredExams";
 import useOnScreen from "../hooks/useOnScreen";
 import Link from "next/link";
+import useGetAllIndexedDB from "../hooks/useGetAllIndexedDB";
 
 function Page() {
+  const [unRegisterdExams, setUnRegisterdExams] = useState([]);
   const [jeeRef, jeeIsVisible] = useOnScreen({ threshold: 0.5 });
   const [neetRef, neetIsVisible] = useOnScreen({ threshold: 0.5 });
   const [keamRef, keamIsVisible] = useOnScreen({ threshold: 0.5 });
@@ -14,6 +17,44 @@ function Page() {
     threshold: 0.5,
   });
   const [systemRef, systemIsVisible] = useOnScreen({ threshold: 0.5 });
+  const getAll = useGetAllIndexedDB();
+
+  useEffect(() => {
+    const resultDbRequest = window.indexedDB.open("resultsDB", 1);
+    resultDbRequest.onsuccess = (e) => {
+      const db = e.target.result;
+      getAll(db, "exams").then((data) => {
+        const uniqueExamIds = [
+          ...new Set(data.map((obj) => obj.key.split("-")[1])),
+        ];
+        console.log(data);
+        uniqueExamIds.forEach((examId) => {
+          console.log(examId);
+          console.log({
+            response: data.find((obj) => obj.key === "response-" + examId),
+            state: data.find((obj) => obj.key === "state-" + examId),
+          });
+          setUnRegisterdExams((prev) => {
+              
+            if(uniqueExamIds.length <= prev?.length){
+              return prev
+            }
+
+            return [
+              ...prev,
+              {
+                response: data.find((obj) => obj.key === "response-" + examId),
+                state: data.find((obj) => obj.key === "state-" + examId),
+              },
+            ];
+          });
+        });
+      });
+    };
+  }, []);
+
+  useEffect(() => console.log(unRegisterdExams), [unRegisterdExams]);
+
   return (
     <div className="p-4">
       <Header />
@@ -35,8 +76,25 @@ function Page() {
           </div>
         </div>
       </main>
+      <section className="w-full flex-col gap-4 justify-center pr-10 items-center flex">
+        {unRegisterdExams.map((exam) => (
+          <div className="rounded-md flex text-primary flex-col justify-center items-center gap-1 bg-secondary border-primary border w-80 h-40">
+            <p className="text-red-400 font-extralight text-sm text-center">
+              You have some error in this exam submission <br /> you can submit
+              from here before your time end
+            </p>
+            <h1 className="font-bold text-xl ">JEE Mains</h1>
+            <h2 className="font-semibold text-lg">
+              {exam.response?.value?.examDate?.split("T").join(" ")}
+            </h2>
+            <button className="border-primary bg-primary rounded-md px-3 font-bold text-black">
+              SUBMIT
+            </button>
+          </div>
+        ))}
+      </section>
       <section>
-        <RegisterdExams/>        
+        <RegisterdExams />
       </section>
       <section
         id="exams"

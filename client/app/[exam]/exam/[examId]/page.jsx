@@ -62,6 +62,7 @@ const JeeExam = () => {
   const hashData = useHashString();
   const router = useRouter();
   const optionAlphaToIndex = { A: 0, B: 1, C: 2, D: 3 };
+  const [examDate,setExamDate] = useState(null)
 
   useEffect(() => {
     let exams;
@@ -83,6 +84,7 @@ const JeeExam = () => {
       getReq.onsuccess = (e) => {
         setCurrentQuestion(e.target.result?.questions[subject][0]);
         setQuestions(e.target.result?.questions);
+        setExamDate(e.target.result?.date)
       };
       setCurrentQuestion(questions[subject][0]);
     };
@@ -112,7 +114,7 @@ const JeeExam = () => {
     if (answersDB) {
       let transaction = answersDB.transaction("exams", "readwrite");
       let answersStore = transaction.objectStore("exams");
-      answersStore?.put({ _id: "response-" + examId, answers });
+      answersStore?.put({ _id: "response-" + examId, answers,examDate });
       answersStore?.put({ _id: "state-" + examId, questionIndexes });
     }
   }, [answers]);
