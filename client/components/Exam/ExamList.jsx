@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SERVER_URL from "../../config/serverUrl";
 import Link from "next/link";
+import Loading from "../loading";
 
 function ExamList() {
   const [exams, setExams] = useState([]);
   const [registeredExams, setRegisteredExams] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
       .get(SERVER_URL + "/ready-exams", { withCredentials: true })
@@ -21,6 +23,7 @@ function ExamList() {
         if (data.success) {
           setRegisteredExams(data.exams?.exams);
           console.log(data.exams?.exams);
+          setLoading(false);
         }
       });
   }, []);
@@ -49,19 +52,26 @@ function ExamList() {
             {i + 1}
           </div>
           <div className="w-full flex py-3">
-          <div className="md:w-1/2 w-full flex justify-center font-semibold items-center">
-            <h1 className="md:text-lg text-center">
-              {exam.date?.replace("T", "  ")}
-            </h1>
-          </div>
-          <div className="md:w-1/2 w-full flex justify-center font-semibold items-center">
-            <h1 className="md:text-lg text-center">
-              upcoming{registeredExams?.includes(exam._id) && " (registered)"}
-            </h1>
-          </div>
+            <div className="md:w-1/2 w-full flex justify-center font-semibold items-center">
+              <h1 className="md:text-lg text-center">
+                {exam.date?.replace("T", "  ")}
+              </h1>
+            </div>
+            <div className="md:w-1/2 w-full flex justify-center font-semibold items-center">
+              <h1 className="md:text-lg text-center">
+                upcoming{registeredExams?.includes(exam._id) && " (registered)"}
+              </h1>
+            </div>
           </div>
         </Link>
       ))}
+      <div className="w-full">
+        {exams?.length === 0 && (
+          <div className="text-primary flex justify-center text-center mt-10 font-bold text-3xl">
+            {loading ? <Loading /> : "No Exams Found!"}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

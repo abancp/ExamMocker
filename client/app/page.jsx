@@ -6,6 +6,9 @@ import RegisterdExams from "../components/RegisteredExams";
 import useOnScreen from "../hooks/useOnScreen";
 import Link from "next/link";
 import useGetAllIndexedDB from "../hooks/useGetAllIndexedDB";
+import axios from "axios"
+import SERVER_URL from "../config/serverUrl";
+import { toast } from "sonner";
 
 function Page() {
   const [unRegisterdExams, setUnRegisterdExams] = useState([]);
@@ -17,12 +20,15 @@ function Page() {
     threshold: 0.5,
   });
   const [systemRef, systemIsVisible] = useOnScreen({ threshold: 0.5 });
+  const [answersDB,setAnswersDB] = useState(null)
+
   const getAll = useGetAllIndexedDB();
 
   useEffect(() => {
     const resultDbRequest = window.indexedDB.open("resultsDB", 1);
     resultDbRequest.onsuccess = (e) => {
       const db = e.target.result;
+      setAnswersDB(db) 
       getAll(db, "exams").then((data) => {
         const uniqueExamIds = [
           ...new Set(data.map((obj) => obj.key.split("-")[1])),
@@ -35,9 +41,8 @@ function Page() {
             state: data.find((obj) => obj.key === "state-" + examId),
           });
           setUnRegisterdExams((prev) => {
-              
-            if(uniqueExamIds.length <= prev?.length){
-              return prev
+            if (uniqueExamIds.length <= prev?.length) {
+              return prev;
             }
 
             return [
@@ -52,6 +57,36 @@ function Page() {
       });
     };
   }, []);
+
+  const submit = (response,state,examId) => {
+    axios
+      .post(
+        SERVER_URL + "/exam/jee/" + examId,
+        { response,state},
+        { withCredentials: true },
+      )
+      .then(({ data }) => {
+        if (data.success) {
+          toast.success(data.message);
+          window.localStorage.removeItem("k-" + examId);
+          if (answersDB) {
+            let transaction = answersDB.transaction("exams", "readwrite");
+            let answersStore = transaction.objectStore("exams");
+            const deleteResponseReq = answersStore?.delete(
+              "response-" + examId,
+            );
+            const deleteStateReq = answersStore?.delete("state-" + examId);
+            deleteResponseReq.onsuccess = () => {
+              console.log("response deleted");
+            };
+            deleteStateReq.onsuccess = () => {
+              console.log("state deleted");
+            };
+            setUnRegisterdExams((prev)=>prev.filter(obj=>obj.response.value._id !== "response-"+examId))
+          }
+        }
+      });
+  };
 
   useEffect(() => console.log(unRegisterdExams), [unRegisterdExams]);
 
@@ -87,7 +122,7 @@ function Page() {
             <h2 className="font-semibold text-lg">
               {exam.response?.value?.examDate?.split("T").join(" ")}
             </h2>
-            <button className="border-primary bg-primary rounded-md px-3 font-bold text-black">
+            <button onClick={(()=>{submit(exam.response.value,exam.response.state,exam.response.value._id.split('-')[1])})} className="border-primary bg-primary rounded-md px-3 font-bold text-black">
               SUBMIT
             </button>
           </div>

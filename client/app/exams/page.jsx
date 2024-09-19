@@ -4,13 +4,12 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import SERVER_URL from "../../config/serverUrl";
 import axios from "axios";
+import Loading from "../../components/loading"
+
 function Exams() {
+  const [loading,setLoading] = useState(true)
   const [exams, setExams] = useState({
-    upcoming: [
-      { exam: "jee", date: "swrT" },
-      { exam: "jee", date: "swrT" },
-      { exam: "jee", date: "swrT" },
-    ],
+    upcoming: [],
     registered: [],
     attended: [],
   });
@@ -35,6 +34,7 @@ function Exams() {
       .then(({ data }) => {
         if (data.success) {
           setExams((prev) => ({ ...prev, attended: data.exams }));
+          setLoading(false)
         }
       });
   }, []);
@@ -81,6 +81,13 @@ function Exams() {
             <h1> {exam.date.split("T").join(" ")} </h1>
           </div>
         ))}
+        <div className="w-full">
+          {exams[type]?.length === 0 && (
+            <div className="text-primary flex justify-center text-center mt-10 font-bold text-3xl">
+              {loading ? <Loading /> : "No Exams Found!"}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
