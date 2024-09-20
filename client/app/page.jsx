@@ -151,6 +151,7 @@ function Page() {
         </div>
         <div className="flex justify-center md:justify-end">
           <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">
+            <Link href={"/neet"}>
             <div
               ref={neetRef}
               hidden={neetIsVisible ? false : true}
@@ -159,18 +160,7 @@ function Page() {
               <h1 className=" text-3xl  font-semibold">NEET</h1>
               <h3 className="font-extralight ">Medical</h3>
             </div>
-          </div>
-        </div>
-        <div className="flex  justify-center md:justify-start">
-          <div className="p-3 border-[2px] rounded-[2rem] border-primary-bright">
-            <div
-              ref={keamRef}
-              hidden={keamIsVisible ? false : true}
-              className={`cursor-pointer bg-gradient-to-t from-[#090A0D] duration-700 ${keamIsVisible && "shadow-[rgba(10,101,198,0.5)_0px_0px_700px_-10px]"} flex gap-3 flex-col justify-center items-center to-[#131C23] text-center rounded-lg border-[#0e2731] w-[320px] h-[350px]`}
-            >
-              <h1 className=" text-3xl  font-semibold">KEAM</h1>
-              <h3 className="font-extralight ">Engineering</h3>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

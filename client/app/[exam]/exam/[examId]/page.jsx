@@ -383,6 +383,11 @@ const JeeExam = () => {
     setLoading(false);
   }, []);
 
+  const goToBottum = ()=>{
+    const questionElement = window.document.getElementById("exam-element")
+    questionElement.scrollTop = questionElement.scrollHeight
+  }
+
   return (
     <MathJaxContext>
       {loading && (
@@ -467,11 +472,11 @@ const JeeExam = () => {
               <h1 className="text-lg font-semibold">
                 Question {currentQuestionIndex + 1}:
               </h1>
-              <div className="p-2 py-1 text-white rounded-full bg-blue-700">
-                <h1 className="text-2xl  font-bold">↓</h1>
+              <div onClick={()=>{goToBottum()}} className="cursor-pointer p-2 py-1 text-white rounded-full bg-blue-700">
+                <h1 className="text-2xl font-serif font-bold">↓</h1>
               </div>
             </div>
-            <div className="h-[23rem] border-b border-black overflow-y-scroll">
+            <div id="exam-element" className="h-[23rem] border-b border-black overflow-y-scroll">
               <h1 className="p-3 text-xl font-sans font-semibold">
                 <MathJax>{currentQuestion?.question}</MathJax>
               </h1>
