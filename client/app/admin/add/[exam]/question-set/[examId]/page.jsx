@@ -47,7 +47,7 @@ function page() {
     physics: [],
     chemistry: [],
   });
-
+  const [addedQuestionsMap, setAddedQuestionsMap] = useState({});
   const optionIndexToAlpha = useMemo(() => ({
     0: "A",
     1: "B",
@@ -83,6 +83,14 @@ function page() {
             }
           }
           setExam(fetchedExam);
+          const initialAddedQuestionsMap = {};
+          const subjects = ["mathematics", "physics", "chemistry"];
+          subjects.forEach((subject0) => {
+            fetchedExam[subject0]?.forEach((question0) => {
+              initialAddedQuestionsMap[question0?._id] = true;
+            });
+          });
+          setAddedQuestionsMap(initialAddedQuestionsMap);
           setCurrentQuestion(fetchedExam.mathematics[0]);
           setCanEdit(true);
         } else {
@@ -109,6 +117,8 @@ function page() {
 
   useEffect(() => {
     console.log(exam);
+    console.log(questionIds);
+    console.log(currentQuestion?._id in addedQuestionsMap);
   }, [subject, questionNumber]);
 
   const changeSubject = (e) => {
@@ -154,11 +164,12 @@ function page() {
     }
     setCanEdit(false);
     if (currentQuestion) {
-      console.log(subject);
       exam[subject][questionNumber] = currentQuestion;
       questionIds[subject][questionNumber] = currentQuestion._id;
-      console.log(exam);
-      console.log(questionIds);
+      setAddedQuestionsMap((prev) => ({
+        ...prev,
+        [currentQuestion._id]: true,
+      }));
     } else {
       console.log("no question for save");
     }
@@ -214,7 +225,38 @@ function page() {
   };
 
   const debounceGetQuestions = useCallback(debounce(searchQuestions, 200));
-
+  const handleQuestionSelect = (question) => {
+    if (!canEdit) {
+      return;
+    }
+    if (question.subject === subject) {
+      exam[subject][questionNumber] = question;
+      questionIds[subject][questionNumber] = question._id;
+      setAddedQuestionsMap((current) => {
+        const newObj = { ...current };
+        delete newObj[currentQuestion._id];
+        return newObj;
+      });
+      setCurrentQuestion(question);
+      setAddedQuestionsMap((prev) => ({
+        ...prev,
+        [question._id]: true,
+      }));
+    }
+  };
+  const removeCurrentQuestionFromExam = () => {
+    if (!canEdit) {
+      return;
+    }
+    setAddedQuestionsMap((current) => {
+      const newObj = { ...current };
+      delete newObj[currentQuestion._id];
+      return newObj;
+    });
+    exam[subject][questionNumber] = {};
+    questionIds[subject][questionNumber] = undefined;
+    setCurrentQuestion({});
+  };
   return (
     <MathJaxContext>
       <div className="min-h-screen max-h-fit flex flex-col pb-3 gap-2 pt-[2.7rem] px-3 w-full">
@@ -306,7 +348,7 @@ function page() {
 
           <button
             onClick={() => save()}
-            className={`${saving && "opacity-70"} py-[.279rem] px-2 border border-primary font-bold text-lg bg-[#259ac4]`}
+            className={`${saving && "opacity-70"} py-[.279rem] rounded-md px-2 border border-primary font-bold text-lg bg-[#259ac4]`}
           >
             {saving ? "saving.." : "save"}
           </button>
@@ -316,9 +358,17 @@ function page() {
           <div className="border border-[#40c425] flex justify-center items-center border-dashed min-h-20 max-h-fit py-2 px-3 w-full">
             {currentQuestion && JSON.stringify(currentQuestion) !== "{}" ? (
               <div className="w-full py-2 pb-0">
-                <h1 className=" text-center w-full text-xl font-semibold">
-                  Question
-                </h1>
+                <div className="flex w-full justify-center gap-4">
+                  <h1 className=" text-center  text-xl font-semibold">
+                    Question
+                  </h1>
+                  <button
+                    onClick={removeCurrentQuestionFromExam}
+                    className="rounded-md bg-primary px-2 cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </div>
                 <div className="flex gap-3 pl-2">
                   <div className="text-lg font-medium">Q:</div>
                   <div className="font-light">
@@ -353,29 +403,29 @@ function page() {
               </h1>
             )}
           </div>
-          {questions?.map((question) => (
-            <div
-              href={"/admin/question/" + question._id}
-              className="border-primary w-full flex justify-between  p-2 border"
-            >
-              <div
-                onClick={() => {
-                  question.subject === subject && setCurrentQuestion(question);
-                }}
-                className="whitespace-nowrap overflow-hidden w-full text-ellipsis"
-              >
-                <MathJax>{question.question}</MathJax>
-              </div>
-              <div className=" flex items-center">
-                <Link
-                  href={"/admin/question/" + question._id}
-                  className="  px-1 py-[.10rem] bg-[#35353f58] "
-                >
-                  Open
-                </Link>
-              </div>
-            </div>
-          ))}
+          {questions?.map(
+            (question) =>
+              question._id in addedQuestionsMap || (
+                <div className="border-primary  w-full flex justify-between  p-2 border">
+                  <div
+                    onClick={() => {
+                      handleQuestionSelect(question);
+                    }}
+                    className="whitespace-nowrap cursor-pointer overflow-hidden w-full text-ellipsis"
+                  >
+                    <MathJax>{question.question}</MathJax>
+                  </div>
+                  <div className=" flex items-center">
+                    <Link
+                      href={"/admin/question/" + question._id}
+                      className="  px-1 py-[.10rem] bg-[#35353f58] "
+                    >
+                      Open
+                    </Link>
+                  </div>
+                </div>
+              ),
+          )}
         </div>
       </div>
     </MathJaxContext>
