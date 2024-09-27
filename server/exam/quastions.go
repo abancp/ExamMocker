@@ -25,37 +25,42 @@ func GetQuestions(c *gin.Context) {
 	subject := c.Query("subject")
 	topic := c.Query("topic")
 	search := c.Query("search")
+	Qtype := c.Query("type")
+	
+	if Qtype == ""{
+		Qtype = "MCQ"
+	}
 
 	db := config.DB
 	var results []bson.M
 	var filter bson.M
-	if search != "" {
-		if subject != "" {
-			if topic != "" {
-				filter = bson.M{"topic": topic, "subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
+		if search != "" {
+			if subject != "" {
+				if topic != "" {
+				filter = bson.M{"type":Qtype,"topic": topic, "subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
+				} else {
+					filter = bson.M{"type":Qtype,"subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
+				}
 			} else {
-				filter = bson.M{"subject": subject, "question": bson.M{"$regex": search, "$options": "i"}}
+				if topic != "" {
+					filter = bson.M{"type":Qtype,"topic": topic, "question": bson.M{"$regex": search, "$options": "i"}}
+				} else {
+					filter = bson.M{"type":Qtype,"question": bson.M{"$regex": search, "$options": "i"}}
+				}
 			}
 		} else {
-			if topic != "" {
-				filter = bson.M{"topic": topic, "question": bson.M{"$regex": search, "$options": "i"}}
+			if subject != "" {
+				if topic != "" {
+					filter = bson.M{"type":Qtype,"topic": topic, "subject": subject}
+				} else {
+					filter = bson.M{"type":Qtype,"subject": subject}
+				}
 			} else {
-				filter = bson.M{"question": bson.M{"$regex": search, "$options": "i"}}
-			}
-		}
-	} else {
-		if subject != "" {
-			if topic != "" {
-				filter = bson.M{"topic": topic, "subject": subject}
-			} else {
-				filter = bson.M{"subject": subject}
-			}
-		} else {
-			if topic != "" {
-				filter = bson.M{"topic": topic}
-			} else {
-				filter = bson.M{}
-			}
+				if topic != "" {
+					filter = bson.M{"type":Qtype,"topic": topic}
+				} else {
+					filter = bson.M{"type":Qtype,}
+				}
 		}
 	}
 	cursor, err := db.Collection("questions").Find(context.Background(), filter)

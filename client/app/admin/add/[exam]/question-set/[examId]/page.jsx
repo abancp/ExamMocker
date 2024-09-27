@@ -405,7 +405,7 @@ function page() {
           </div>
           {questions?.map(
             (question) =>
-              question._id in addedQuestionsMap || (
+              question._id in addedQuestionsMap && question.type !== "MCQ" || (
                 <div className="border-primary  w-full flex justify-between  p-2 border">
                   <div
                     onClick={() => {

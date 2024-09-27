@@ -62,7 +62,7 @@ const JeeExam = () => {
   const hashData = useHashString();
   const router = useRouter();
   const optionAlphaToIndex = { A: 0, B: 1, C: 2, D: 3 };
-  const [examDate,setExamDate] = useState(null)
+  const [examDate, setExamDate] = useState(null)
 
   useEffect(() => {
     let exams;
@@ -105,6 +105,38 @@ const JeeExam = () => {
         console.log(e.target.result);
         if (e.target.result?.questionIndexes) {
           setQuestionIndexes(e.target.result?.questionIndexes);
+          let tempQuestionIndexesMap = {
+            notVisited: 0,
+            notAnswered: 0,
+            answered: 0,
+            MForReview: 0,
+            MForReviewAndA: 0,
+          }          
+          for(const [subject,subjectsQIndexes] of Object.entries(e.target.result?.questionIndexes)){
+            for( const qIndex of subjectsQIndexes){
+              switch (qIndex) {
+                case 1:
+                  tempQuestionIndexesMap.notVisited++ 
+                  break;
+                case 2:
+                  tempQuestionIndexesMap.notAnswered++ 
+                  break;
+                case 3:
+                  tempQuestionIndexesMap.answered++ 
+                  break;
+                case 4:
+                  tempQuestionIndexesMap.MForReview++ 
+                  break;
+                case 5:
+                  tempQuestionIndexesMap.MForReviewAndA++ 
+                  break;
+                default:
+                  console.log("questionIndexMap from indexed db system crashed ,qIndex : "+qIndex)
+                  break;
+              }
+            } 
+          }
+          setQuestionIndexesMap(tempQuestionIndexesMap)
         }
       };
     };
@@ -114,7 +146,7 @@ const JeeExam = () => {
     if (answersDB) {
       let transaction = answersDB.transaction("exams", "readwrite");
       let answersStore = transaction.objectStore("exams");
-      answersStore?.put({ _id: "response-" + examId, answers,examDate });
+      answersStore?.put({ _id: "response-" + examId, answers, examDate });
       answersStore?.put({ _id: "state-" + examId, questionIndexes });
     }
   }, [answers]);
@@ -176,6 +208,10 @@ const JeeExam = () => {
         [subject]: prevIndexes[subject].map((item, i) =>
           i === currentQuestionIndex ? 2 : item,
         ),
+      }));
+      setAnswers((prev) => ({
+        ...prev,
+        [subject[0] + "-" + currentQuestionIndex]: selectedOption,
       }));
     }
     console.log(questionIndexes[currentQuestionIndex]);
@@ -244,6 +280,10 @@ const JeeExam = () => {
           i === currentQuestionIndex ? 4 : item,
         ),
       }));
+      setAnswers((prev) => ({
+        ...prev,
+        [subject[0] + "-" + currentQuestionIndex]: selectedOption,
+      }));
       if (
         questionStateIndexToState[
         questionIndexes[subject][currentQuestionIndex]
@@ -278,10 +318,6 @@ const JeeExam = () => {
         [subject]: prevIndexes[subject].map((item, i) =>
           i === currentQuestionIndex ? 3 : item,
         ),
-      }));
-      setAnswers((prev) => ({
-        ...prev,
-        [subject[0] + "-" + currentQuestionIndex]: selectedOption,
       }));
     }
 
@@ -383,7 +419,7 @@ const JeeExam = () => {
     setLoading(false);
   }, []);
 
-  const goToBottum = ()=>{
+  const goToBottum = () => {
     const questionElement = window.document.getElementById("exam-element")
     questionElement.scrollTop = questionElement.scrollHeight
   }
@@ -472,7 +508,7 @@ const JeeExam = () => {
               <h1 className="text-lg font-semibold">
                 Question {currentQuestionIndex + 1}:
               </h1>
-              <div onClick={()=>{goToBottum()}} className="cursor-pointer p-2 py-1 text-white rounded-full bg-blue-700">
+              <div onClick={() => { goToBottum() }} className="cursor-pointer p-2 py-1 text-white rounded-full bg-blue-700">
                 <h1 className="text-2xl font-serif font-bold">↓</h1>
               </div>
             </div>

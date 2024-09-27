@@ -698,7 +698,6 @@ func SubmitExam(c *gin.Context) {
 				fmt.Println("Error parsing time:", err)
 				return
 			}
-
 			_, err = db.Collection("jee-users").UpdateOne(context.Background(), bson.M{"exam": id, "email": userEmail}, bson.M{"$set": bson.M{"response": body.Response, "state": body.State, "submittedTime": submittedTime}})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong!"})
