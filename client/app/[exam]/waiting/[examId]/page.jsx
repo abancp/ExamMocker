@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import SERVER_URL from "../../../../config/serverUrl";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import clientUrl from "../../../../config/clientUrl";
 import { toast } from "sonner";
 import Header from "../../../../components/Header";
+import { useRouter } from "next/navigation";
 
 function page() {
   const { examId } = useParams();
@@ -16,6 +16,7 @@ function page() {
   const [isExamWindowOpen, setIsExamWindowOpen] = useState(false);
   const [warningTimer, setWarningTimer] = useState(10);
   const [exam, setExam] = useState({});
+  const router = useRouter()
 
   
 
