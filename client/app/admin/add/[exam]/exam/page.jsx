@@ -14,6 +14,8 @@ function page() {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+    console.log(e.target[1].value)
+    return
     console.log({ exam: e.target[0].value, date: e.target[1].value});
     const { data } = await axios.post(SERVER_URL + '/admin/exam', { exam: e.target[0].value, date: e.target[1].value},{withCredentials:true})
     if(data.success){
