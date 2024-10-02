@@ -10,7 +10,7 @@ function Header() {
   const toggleMenu = () => {
     setShowMenu((prev) => !prev);
   };
-
+  
   return (
     <div className="text-primary fixed top-5 left-0 flex flex-col gap-4 justify-center items-center w-full">
       <div className="text-[rgb(152,211,255)] backdrop-blur-sm rounded-full flex justify-between w-[97%] md:w-[90%] h-11 border border-primary">

@@ -21,7 +21,7 @@ function Page() {
   });
   const [systemRef, systemIsVisible] = useOnScreen({ threshold: 0.5 });
   const [answersDB,setAnswersDB] = useState(null)
-
+  
   const getAll = useGetAllIndexedDB();
 
   useEffect(() => {
