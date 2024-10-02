@@ -28,6 +28,7 @@ function page() {
     21, 22, 23, 24, 25, 26, 27, 28, 29,
   ];
   const [questions, setQuestions] = useState([]);
+  const [questionsN,setQuestionsN] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [exam, setExam] = useState({
     mathematics: [],
@@ -90,6 +91,7 @@ function page() {
               initialAddedQuestionsMap[question0?._id] = true;
             });
           });
+          console.log(initialAddedQuestionsMap)
           setAddedQuestionsMap(initialAddedQuestionsMap);
           setCurrentQuestion(fetchedExam.mathematics[0]);
           setCanEdit(true);
@@ -112,6 +114,13 @@ function page() {
       })
       .then(({ data }) => {
         setQuestions(data.questions);
+      });
+   axios
+      .get(`${SERVER_URL}/admin/questions?subject=${subject}&topic=${topic}&type=Numerical`, {
+        withCredentials: true,
+      })
+      .then(({ data }) => {
+        setQuestionsN(data.questions);
       });
   }, [topic, subject]);
 
@@ -214,7 +223,8 @@ function page() {
     console.log(
       `searching for subject : ${subjectForSearch} , topic : ${topicForSearch} , query : ${search}`,
     );
-    axios
+      if(questionNumber < 19) {
+      axios
       .get(
         `${SERVER_URL}/admin/questions?subject=${subjectForSearch}&topic=${topicForSearch}&search=${search}`,
         { withCredentials: true },
@@ -222,6 +232,16 @@ function page() {
       .then(({ data }) => {
         setQuestions(data.questions);
       });
+      }else{
+      axios
+      .get(
+        `${SERVER_URL}/admin/questions?subject=${subjectForSearch}&topic=${topicForSearch}&search=${search}&type=numerical`,
+        { withCredentials: true },
+      )
+      .then(({ data }) => {
+        setQuestionsN(data.questions);
+      });
+      }
   };
 
   const debounceGetQuestions = useCallback(debounce(searchQuestions, 200));
@@ -403,9 +423,11 @@ function page() {
               </h1>
             )}
           </div>
-          {questions?.map(
+          {
+            questionNumber < 19?
+            questions?.map(
             (question) =>
-              question._id in addedQuestionsMap && question.type !== "MCQ" || (
+              question._id in addedQuestionsMap || (
                 <div className="border-primary  w-full flex justify-between  p-2 border">
                   <div
                     onClick={() => {
@@ -425,7 +447,31 @@ function page() {
                   </div>
                 </div>
               ),
-          )}
+          ):
+          questionsN?.map (
+            (question) =>
+              question._id in addedQuestionsMap  || (
+                <div className="border-primary  w-full flex justify-between  p-2 border">
+                  <div
+                    onClick={() => {
+                      handleQuestionSelect(question);
+                    }}
+                    className="whitespace-nowrap cursor-pointer overflow-hidden w-full text-ellipsis"
+                  >
+                    <MathJax>{question.question}</MathJax>
+                  </div>
+                  <div className=" flex items-center">
+                    <Link
+                      href={"/admin/question/" + question._id}
+                      className="  px-1 py-[.10rem] bg-[#35353f58] "
+                    >
+                      Open
+                    </Link>
+                  </div>
+                </div>
+              ),
+          )
+          }
         </div>
       </div>
     </MathJaxContext>
