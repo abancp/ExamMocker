@@ -84,10 +84,11 @@ function Admin() {
                   <td>Aban Muhammed C P</td>
                   <td className="flex justify-center gap-2 pt-[.35rem]">
                     <svg
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         confirm(
                           "are you sure to delet exam at " +
-                            exam.date.replace("T", " "),
+                          exam.date.replace("T", " "),
                         ) && deleteExam(exam._id);
                       }}
                       xmlns="http://www.w3.org/2000/svg"
