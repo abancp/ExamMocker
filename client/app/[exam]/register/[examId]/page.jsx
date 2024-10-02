@@ -86,7 +86,7 @@ function JeeRegister() {
                             <h4 className="text-lg">Password : </h4>
                             <input autoFocus className="bg-transparent  p-1 rounded-lg text-lg border border-[#0e2731] focus:outline-none" type="password" />
                         </div>
-                        <input value="Continue With Payment 0$" className=" p-1 rounded-lg text-black text-lg border border-[#1c6886]  focus:outline-none outline-none  bg-[#259ac4] hover:bg-[#65c3e5] duration-300 cursor-pointer" type="submit" />
+                        <input value="Continue With Payment 0$" className=" p-1 rounded-lg text-black text-lg border border-[#1c6886]  focus:outline-none outline-none   bg-[#259ac4] hover:bg-[#65c3e5] duration-300 cursor-pointer" type="submit" />
                     </form>
                 </div>
             </div>
